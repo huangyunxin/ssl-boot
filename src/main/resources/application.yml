@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: ssl
+  datasource:
+    # MySql
+    url: jdbc:mysql://10.10.1.6:3306/ssl?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+    username: root
+    password: transnal
+  thymeleaf:
+    cache: false
+server:
+  port: 8080
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+      table-underline: true

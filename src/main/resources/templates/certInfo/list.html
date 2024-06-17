@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>证书管理</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+<table class="layui-hide" id="view-table"></table>
+<!--表单-->
+<div id="detail-view" style="padding: 30px;display: none;">
+    <form id="detail-form" class="layui-form" lay-filter="detail-form-filter">
+        <!--填写项-->
+        <div id="edit-group">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">id</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">名称随意填写</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="domain" lay-verify="required" placeholder="请输入" autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">
+                        证书的域名，多个用英文逗号分隔，例：*.example.com,*.test.example.com
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名解析类型</label>
+                <div class="layui-input-block">
+                    <select name="domainDnsType">
+                        <option value="">无</option>
+                        <option value="ALI_AUTHORITY">阿里云-权威解析</option>
+                    </select>
+                    <div class="layui-form-mid layui-text-em">目前只支持在阿里云解析的域名</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">阿里云AccessKeyId</label>
+                <div class="layui-input-block">
+                    <input type="text" name="accountAccessKeyId" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">用于向阿里云DNS添加解析，确保账号有相关权限</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">阿里云AccessKeySecret</label>
+                <div class="layui-input-block">
+                    <input type="text" name="accountAccessKeySecret" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">用于向阿里云DNS添加解析，确保账号有相关权限</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否测试</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isTest" value="true" title="是">
+                    <input type="radio" name="isTest" value="false" title="否" checked>
+                </div>
+                <div class="layui-form-mid layui-text-em">
+                    同一个域名频繁申请会被限制，开启后使用测试环境acme://letsencrypt.org/staging，不受数量限制。
+                    <br/>
+                    测试环境签发的证书不被浏览器信任，仅用于测试，正式使用请选择否。
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否自动更新</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isAuto" value="true" title="是">
+                    <input type="radio" name="isAuto" value="false" title="否" checked>
+                </div>
+                <div class="layui-form-mid layui-text-em">开启自动更新，会在域名到期前7天自动更新证书</div>
+            </div>
+        </div>
+        <!--只读项-->
+        <div id="readonly-group">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">证书公钥</label>
+                <div class="layui-input-block">
+                    <textarea name="publicKey" placeholder="自动生成" class="layui-textarea" disabled></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">证书私钥</label>
+                <div class="layui-input-block">
+                    <textarea name="privateKey" placeholder="自动生成" class="layui-textarea" disabled></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">证书有效期开始时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="validityDateStart" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">证书有效期结束时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="validityDateEnd" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">证书申请状态</label>
+                <div class="layui-input-block">
+                    <select name="status" disabled>
+                        <option value="">无</option>
+                        <option value="UNDERWAY">申请中</option>
+                        <option value="DONE">成功</option>
+                        <option value="FAIL">失败</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">日志</label>
+                <div class="layui-input-block">
+                    <textarea name="log" placeholder="自动生成" class="layui-textarea" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+<script type="text/html" id="top-tool">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-sm" lay-event="add">新增</a>
+    </div>
+</script>
+<script type="text/html" id="row-tool">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-sm" lay-event="view">查看</a>
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-sm" lay-event="deleted">删除</a>
+        <br/>
+        <a class="layui-btn layui-btn-sm" lay-event="nowUpdate" style="margin-top: 10px;">立即更新证书</a>
+    </div>
+</script>
+<script>
+    var $ = layui.$;
+    var form = layui.form;
+
+    layui.use('table', function () {
+        var table = layui.table;
+
+        // 渲染
+        table.render({
+            elem: '#view-table',
+            url: '/certInfo',
+            page: true,
+            request: {
+                "pageName": "current",
+                "limitName": "size"
+            },
+            response: {
+                statusCode: 200 // 重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            cols: [
+                [
+                    {field: 'name', title: '名称', minWidth: 200},
+                    {field: 'domain', title: '域名', minWidth: 200},
+                    {
+                        field: 'domainDnsType', title: '解析类型', minWidth: 150, templet: function (d) {
+                            switch (d.domainDnsType) {
+                                case "ALI_AUTHORITY":
+                                    return "阿里云-权威解析";
+                                default:
+                                    return "-";
+                            }
+                        }
+                    },
+                    {
+                        field: 'publicKey', title: '证书公钥', minWidth: 300, templet: function (d) {
+                            return '<div style="white-space: pre-wrap;">' + d.publicKey + '</div>';
+                        }
+                    },
+                    {
+                        field: 'privateKey', title: '证书私钥', minWidth: 300, templet: function (d) {
+                            return '<div style="white-space: pre-wrap;">' + d.privateKey + '</div>';
+                        }
+                    },
+                    {field: 'validityDateStart', title: '证书有效期开始时间', minWidth: 150},
+                    {field: 'validityDateEnd', title: '证书有效期结束时间', minWidth: 150},
+                    {
+                        field: 'status', title: '状态', minWidth: 120, templet: function (d) {
+                            switch (d.status) {
+                                case "UNDERWAY":
+                                    return "申请中";
+                                case "DONE":
+                                    return "已完成";
+                                case "FAIL":
+                                    return "失败";
+                                default:
+                                    return "-";
+                            }
+                        }
+                    },
+                    {
+                        field: 'log', title: '日志', minWidth: 300, templet: function (d) {
+                            return '<div style="white-space: pre-wrap;">' + d.log + '</div>';
+                        }
+                    },
+                    {title: '操作', toolbar: "#row-tool", width: 200}
+                ]
+            ],
+            // 将原始数据解析成 table 组件所规定的数据格式
+            parseData: function (res) {
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.records //解析数据列表
+                };
+            },
+            height: "full-30",
+            lineStyle: "height:100px",
+            defaultToolbar: [],
+            toolbar: '#top-tool'
+        });
+
+        // 工具栏事件
+        table.on('toolbar(view-table)', function (obj) {
+            let event = obj.event;
+            //新增
+            if (event === "add") {
+                addForm();
+            }
+        });
+
+        // 触发单元格工具事件
+        table.on('tool(view-table)', function (obj) {
+            var data = obj.data; // 获得当前行数据
+            if (obj.event === 'view') {
+                viewForm(data.id);
+            } else if (obj.event === 'edit') {
+                editForm(data.id);
+            } else if (obj.event === 'deleted') {
+                deleteForm(data.id);
+            } else if (obj.event === 'nowUpdate') {
+                nowUpdate(data.id);
+            }
+        });
+    });
+
+    //查看表单
+    function viewForm(id) {
+        //清空表单
+        $("#detail-form")[0].reset();
+        //显示只读项
+        $("#readonly-group").show();
+        setForm(id);
+        layer.open({
+            title: '查看',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view")
+        });
+    }
+
+    //新增表单
+    function addForm() {
+        //清空表单
+        $("#detail-form")[0].reset();
+        //隐藏只读项
+        $("#readonly-group").hide();
+        layer.open({
+            title: '新增',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view"),
+            btn: ['保存', '取消'],
+            btn1: function (index, layero, that) {
+                submitForm(index);
+            }
+        });
+    }
+
+    //编辑表单
+    function editForm(id) {
+        //清空表单
+        $("#detail-form")[0].reset();
+        setForm(id);
+        //隐藏只读项
+        $("#readonly-group").hide();
+        layer.open({
+            title: '编辑',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view"),
+            btn: ['保存', '取消'],
+            btn1: function (index, layero, that) {
+                submitForm(index);
+            }
+        });
+    }
+
+    //删除表单
+    function deleteForm(id) {
+        let deletedIndex = layer.confirm('确认删除吗？', {
+            btn: ['确定', '关闭'] //按钮
+        }, function () {
+            $.ajax({
+                url: '/certInfo', // 替换为你的API端点
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({ids: [id]}),
+                success: function (res) {
+                    layer.msg(res.msg);
+                    //刷新table
+                    layui.table.reload('view-table', {
+                        page: {
+                            curr: $(".layui-laypage-em").next().html()
+                        }
+                    });
+                    layer.close(deletedIndex);
+                }
+            });
+        });
+    }
+
+    //表单赋值
+    function setForm(id) {
+        $.get("/certInfo/" + id, function (res) {
+            if (res.success && res.code === 200) {
+                form.val('detail-form-filter', res.data);
+            } else {
+                layer.msg(res.msg);
+            }
+        });
+    }
+
+    //表单提交
+    function submitForm(layerOpenIndex) {
+        //表单验证
+        var isValid = form.validate('#detail-form');
+        // 验证通过
+        if (isValid) {
+            let formObj = form.val('detail-form-filter');
+            //只读项不提交
+            $("#readonly-group").find("input,textarea,select").each(function (index, item) {
+                delete formObj[$(item).attr("name")];
+            });
+            $.post({
+                url: "/certInfo",
+                contentType: 'application/json',
+                data: JSON.stringify(formObj),
+                success: function (res) {
+                    layer.msg(res.msg);
+                    if (res.success && res.code === 200) {
+                        //刷新table
+                        layui.table.reload('view-table', {
+                            page: {
+                                curr: $(".layui-laypage-em").next().html()
+                            }
+                        });
+                        if (layerOpenIndex) {
+                            layer.close(layerOpenIndex);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    layer.msg("提交失败");
+                }
+            });
+        }
+    }
+
+    //立即更新证书
+    function nowUpdate(id) {
+        let openIndex = layer.confirm('确认立即更新证书吗？', {
+            btn: ['确定', '关闭'] //按钮
+        }, function () {
+            $.post({
+                url: "/certInfo/nowUpdate",
+                contentType: 'application/json',
+                data: JSON.stringify({id: id}),
+                success: function (res) {
+                    if (res.success && res.code === 200) {
+                        layer.msg("更新中，请稍后刷新列表查看");
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                    layer.close(openIndex);
+                }
+            });
+        });
+    }
+</script>

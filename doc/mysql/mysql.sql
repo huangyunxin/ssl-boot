@@ -16,6 +16,7 @@ CREATE TABLE `cert_info` (
   `log_` text COMMENT '日志',
   `is_auto` tinyint(1) DEFAULT NULL COMMENT '是否自动更新',
   `is_test` tinyint(1) DEFAULT NULL COMMENT '是否测试',
+  `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书信息';
 

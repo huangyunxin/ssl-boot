@@ -44,15 +44,18 @@ public class CertInfoServiceImpl extends ServiceImpl<CertInfoMapper, CertInfoEnt
                 throw new RuntimeException("更新失败：数据不存在");
             }
 
-            //清空旧数据
+            //重置数据
             this.update(Wrappers.lambdaUpdate(CertInfoEntity.class)
                 .set(CertInfoEntity::getStatus, CertStatusEnum.UNDERWAY.name())
+                .set(CertInfoEntity::getLastExecuteTime, new Date())
                 .set(CertInfoEntity::getPublicKey, null)
                 .set(CertInfoEntity::getPrivateKey, null)
                 .set(CertInfoEntity::getValidityDateStart, null)
-                .set(CertInfoEntity::getValidityDateEnd, null)
                 .set(CertInfoEntity::getLog, null)
                 .eq(CertInfoEntity::getId, entity.getId()));
+
+            //重新查询entity
+            entity = this.getById(entity.getId());
 
             //创建ACME服务器session
             Session session = null;

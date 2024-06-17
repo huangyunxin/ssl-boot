@@ -97,4 +97,11 @@ public class CertInfoEntity implements Serializable {
      */
     @TableField("is_test")
     private Boolean isTest;
+    /**
+     * 最近一次执行时间
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField("last_execute_time")
+    private java.util.Date lastExecuteTime;
 }

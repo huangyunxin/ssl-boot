@@ -8,6 +8,11 @@
     <script th:src="@{/layui/layui.js}"></script>
 </head>
 <body>
+<blockquote class="layui-elem-quote layui-text">
+    首次新增的证书不会自动更新，需要手动点击立即更新证书，更新成功并且有“证书有效期结束时间”的，才会自动更新。
+    <br/>
+    自动更新定时器每5分钟执行一次，会更新有效期7天内的证书。
+</blockquote>
 <table class="layui-hide" id="view-table"></table>
 <!--表单-->
 <div id="detail-view" style="padding: 30px;display: none;">
@@ -84,7 +89,11 @@
                     <input type="radio" name="isAuto" value="true" title="是">
                     <input type="radio" name="isAuto" value="false" title="否" checked>
                 </div>
-                <div class="layui-form-mid layui-text-em">开启自动更新，会在域名到期前7天自动更新证书</div>
+                <div class="layui-form-mid layui-text-em">
+                    开启自动更新，会在域名到期前7天自动更新证书
+                    <br/>
+                    首次新增的证书不会自动更新，需要手动点击立即更新证书，更新成功并且有“证书有效期结束时间”的，才会自动更新。
+                </div>
             </div>
         </div>
         <!--只读项-->
@@ -128,8 +137,16 @@
                     </select>
                 </div>
             </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">最近执行时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lastExecuteTime" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
             <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">日志</label>
+                <label class="layui-form-label">执行日志</label>
                 <div class="layui-input-block">
                     <textarea name="log" placeholder="自动生成" class="layui-textarea" disabled></textarea>
                 </div>
@@ -188,12 +205,12 @@
                     },
                     {
                         field: 'publicKey', title: '证书公钥', minWidth: 300, templet: function (d) {
-                            return '<div style="white-space: pre-wrap;">' + d.publicKey + '</div>';
+                            return d.publicKey ? '<div style="white-space: pre-wrap;">' + d.publicKey + '</div>' : "-";
                         }
                     },
                     {
                         field: 'privateKey', title: '证书私钥', minWidth: 300, templet: function (d) {
-                            return '<div style="white-space: pre-wrap;">' + d.privateKey + '</div>';
+                            return d.privateKey ? '<div style="white-space: pre-wrap;">' + d.privateKey + '</div>' : "-";
                         }
                     },
                     {field: 'validityDateStart', title: '证书有效期开始时间', minWidth: 150},
@@ -212,9 +229,10 @@
                             }
                         }
                     },
+                    {field: 'lastExecuteTime', title: '最近执行时间', minWidth: 150},
                     {
-                        field: 'log', title: '日志', minWidth: 300, templet: function (d) {
-                            return '<div style="white-space: pre-wrap;">' + d.log + '</div>';
+                        field: 'log', title: '执行日志', minWidth: 300, templet: function (d) {
+                            return d.log ? '<div style="white-space: pre-wrap;">' + d.log + '</div>' : "-";
                         }
                     },
                     {title: '操作', toolbar: "#row-tool", width: 200}

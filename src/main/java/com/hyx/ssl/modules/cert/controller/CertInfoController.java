@@ -54,6 +54,7 @@ public class CertInfoController {
         entity.setValidityDateEnd(null);
         entity.setStatus(null);
         entity.setLog(null);
+        entity.setLastExecuteTime(null);
         certInfoService.saveOrUpdate(entity);
         return R.status(true);
     }

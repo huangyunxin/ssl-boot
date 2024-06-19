@@ -1,4 +1,4 @@
-package com.hyx.ssl.modules.cert.strategy;
+package com.hyx.ssl.modules.cert.strategy.dns;
 
 import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.tool.api.R;

@@ -19,12 +19,15 @@
 ![img.png](doc/image/certList2.png)
 ![img.png](doc/image/certList3.png)
 
-* 证书部署（暂未实现）：将证书部署到云服务（阿里云DNS、阿里云OSS等）
+* 证书部署：将证书部署到云服务（阿里云DNS、阿里云OSS等）
+![img.png](doc/image/certDeploy1.jpg)
+![img.png](doc/image/certDeploy2.jpg)
+![img.png](doc/image/certDeploy3.jpg)
 
 ## 开发环境
 
 * 开发工具：IntelliJ IDEA
-* JDK:17
+* JDK:OpenJDK 17.0.7
 * Maven:3.8.6
 * MySQL:5.7
 

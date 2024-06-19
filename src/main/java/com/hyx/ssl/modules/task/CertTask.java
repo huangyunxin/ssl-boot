@@ -25,6 +25,7 @@ public class CertTask {
         //查询需要更新的证书
         List<CertInfoEntity> list = certInfoService.list(Wrappers.lambdaQuery(CertInfoEntity.class)
             .in(CertInfoEntity::getStatus, CertStatusEnum.DONE, CertStatusEnum.FAIL)
+            .in(CertInfoEntity::getIsAuto, true)
             .isNotNull(CertInfoEntity::getValidityDateEnd)
             //查询7天内到期的
             .le(CertInfoEntity::getValidityDateEnd, DateUtil.formatDate(DateUtil.offsetDay(new Date(), 7)))

@@ -41,13 +41,13 @@ public class CertInfoEntity implements Serializable {
     /**
      * 阿里云id
      */
-    @TableField("access_key_id")
-    private String accountAccessKeyId;
+    @TableField("ali_access_key_id")
+    private String aliAccountAccessKeyId;
     /**
      * 阿里云秘钥
      */
-    @TableField("access_key_secret")
-    private String accountAccessKeySecret;
+    @TableField("ali_access_key_secret")
+    private String aliAccountAccessKeySecret;
     /**
      * 账户秘钥
      */

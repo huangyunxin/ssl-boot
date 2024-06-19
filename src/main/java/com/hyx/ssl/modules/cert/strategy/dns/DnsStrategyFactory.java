@@ -1,7 +1,7 @@
-package com.hyx.ssl.modules.cert.strategy;
+package com.hyx.ssl.modules.cert.strategy.dns;
 
 import com.hyx.ssl.modules.cert.enums.DomainDnsTypeEnum;
-import com.hyx.ssl.modules.cert.strategy.impl.AliDnsStrategyImpl;
+import com.hyx.ssl.modules.cert.strategy.dns.impl.AliDnsStrategyImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

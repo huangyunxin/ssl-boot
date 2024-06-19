@@ -10,7 +10,7 @@ import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.enums.CertStatusEnum;
 import com.hyx.ssl.modules.cert.mapper.CertInfoMapper;
 import com.hyx.ssl.modules.cert.service.ICertInfoService;
-import com.hyx.ssl.modules.cert.strategy.DnsStrategyFactory;
+import com.hyx.ssl.modules.cert.strategy.dns.DnsStrategyFactory;
 import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;

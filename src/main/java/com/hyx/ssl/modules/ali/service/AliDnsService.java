@@ -23,11 +23,18 @@ public class AliDnsService {
         if (!StrUtil.isAllNotBlank(accessKeyId, accessKeySecret)) {
             return null;
         }
+        String mapKey = accessKeyId + "_" + accessKeySecret;
+
+        Client client = clientMap.get(mapKey);
+        if (client != null) {
+            return client;
+        }
+
         com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
             .setAccessKeyId(accessKeyId)
             .setAccessKeySecret(accessKeySecret);
-        Client client = new Client(config);
-        clientMap.put(accessKeyId, client);
+        client = new Client(config);
+        clientMap.put(mapKey, client);
         return client;
     }
 

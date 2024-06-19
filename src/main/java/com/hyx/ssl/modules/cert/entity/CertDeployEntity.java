@@ -58,6 +58,11 @@ public class CertDeployEntity implements Serializable {
     @TableField(value = "ali_oss_endpoint")
     private String aliOssEndpoint;
     /**
+     * 阿里云CDN Endpoint
+     */
+    @TableField(value = "ali_cdn_endpoint")
+    private String aliCdnEndpoint;
+    /**
      * 证书id
      */
     @TableField(value = "cert_id")

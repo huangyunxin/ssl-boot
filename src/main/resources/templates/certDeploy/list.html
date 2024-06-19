@@ -47,7 +47,7 @@
                     <select name="type" lay-verify="required" lay-filter="typeFilter">
                         <option value="">无</option>
                         <option value="ALI_OSS">阿里云-对象存储</option>
-                        <!--                        <option value="ALI_CDN">阿里云-CDN</option>-->
+                        <option value="ALI_CDN">阿里云-CDN</option>
                     </select>
                     <div class="layui-form-mid layui-text-em">根据域名所在位置，选择部署类型</div>
                 </div>
@@ -86,6 +86,17 @@
                            class="layui-input">
                     <div class="layui-form-mid layui-text-em">
                         阿里云控制台获取，比如北京是：https://oss-cn-beijing.aliyuncs.com
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item ali-cdn-group">
+                <label class="layui-form-label">阿里云CDN Endpoint</label>
+                <div class="layui-input-block">
+                    <input type="text" name="aliCdnEndpoint" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">
+                        国内一般填写 cdn.aliyuncs.com 参考官方文档 https://api.aliyun.com/product/Cdn
                     </div>
                 </div>
             </div>

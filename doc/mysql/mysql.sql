@@ -31,6 +31,7 @@ CREATE TABLE `cert_deploy` (
   `ali_access_key_secret` varchar(128) DEFAULT NULL COMMENT '阿里云秘钥',
   `ali_oss_bucket` varchar(64) DEFAULT NULL COMMENT '阿里云OSS bucket',
   `ali_oss_endpoint` varchar(128) DEFAULT NULL COMMENT '阿里云OSS endpoint',
+  `ali_cdn_endpoint` varchar(128) DEFAULT NULL COMMENT '阿里云CDN endpoint',
   `cert_id` bigint(20) DEFAULT NULL COMMENT '证书id',
   `cert_public_key` text COMMENT '证书公钥',
   `cert_private_key` text COMMENT '证书私钥',
@@ -41,4 +42,5 @@ CREATE TABLE `cert_deploy` (
   `is_auto` tinyint(1) DEFAULT NULL COMMENT '是否自动部署',
   `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书部署表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书部署表'
+

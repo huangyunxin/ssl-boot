@@ -106,4 +106,9 @@ public class CertDeployEntity implements Serializable {
      */
     @TableField(value = "last_execute_time")
     private Date lastExecuteTime;
+    /**
+     * 下次执行时间
+     */
+    @TableField(exist = false)
+    private String nextExecuteTime;
 }

@@ -13,10 +13,13 @@ import com.hyx.ssl.modules.cert.service.ICertInfoService;
 import com.hyx.ssl.modules.cert.strategy.deploy.DeployStrategyFactory;
 import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.support.CronTrigger;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
@@ -87,5 +90,53 @@ public class CertDeployServiceImpl extends ServiceImpl<CertDeployMapper, CertDep
             entity.setLog(log.toString());
             this.updateById(entity);
         }
+    }
+
+    @Override
+    public R<Date> getNextExecuteTime(CertDeployEntity entity) {
+        if (entity == null || entity.getCertId() == null) {
+            return R.fail("数据错误");
+        }
+
+        if (entity.getIsAuto() == null || !entity.getIsAuto()) {
+            return R.fail("未开启自动部署");
+        }
+
+        //有效期大于7天
+        if (entity.getCertValidityDateEnd() != null &&
+            entity.getCertValidityDateEnd().after(DateUtil.endOfDay(DateUtil.offsetDay(new Date(), 7)))) {
+            return R.fail("证书有效期大于7天");
+        }
+
+        CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
+        if (certInfo == null) {
+            return R.fail("证书信息不存在");
+        }
+
+        //证书不是已完成状态
+        if (!CertStatusEnum.DONE.name().equals(certInfo.getStatus())) {
+            return R.fail("关联的证书状态异常");
+        }
+
+        //证书为空
+        if (!StrUtil.isAllNotBlank(certInfo.getPrivateKey(), certInfo.getPublicKey())) {
+            return R.fail("关联的证书秘钥为空");
+        }
+
+        //证书已过期
+        if (certInfo.getValidityDateEnd() != null && certInfo.getValidityDateEnd().before(new Date())) {
+            return R.fail("关联的证书已过期");
+        }
+
+        //证书私钥未更新
+        if (StrUtil.isNotBlank(entity.getCertPrivateKey()) &&
+            StrUtil.trim(entity.getCertPrivateKey()).equals(StrUtil.trim(certInfo.getPrivateKey()))) {
+            return R.fail("证书秘钥未更新");
+        }
+
+        //获取下一个五分钟的时间
+        CronTrigger cron = new CronTrigger("0 0/5 * * * ?");
+        Instant instant = cron.nextExecution(new SimpleTriggerContext(new Date(), new Date(), new Date()));
+        return R.data(Date.from(instant));
     }
 }

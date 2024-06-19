@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class CertTask {
+public class CertInfoTask {
     private final ICertInfoService certInfoService;
 
     @Scheduled(cron = "0 0/5 * * * ?")

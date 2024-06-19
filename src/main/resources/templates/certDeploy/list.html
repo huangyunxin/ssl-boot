@@ -9,7 +9,7 @@
 </head>
 <body>
 <blockquote class="layui-elem-quote layui-text">
-    自动部署定时器每5分钟执行一次，监测到证书秘钥变更，会自动部署证书。
+    自动部署定时器每5分钟执行一次，如果证书有效期小于等于7天，并且关联的证书私钥已变更，就会自动部署证书。
 </blockquote>
 <table class="layui-hide" id="view-table"></table>
 <!--表单-->
@@ -47,6 +47,7 @@
                     <select name="type" lay-verify="required" lay-filter="typeFilter">
                         <option value="">无</option>
                         <option value="ALI_OSS">阿里云-对象存储</option>
+                        <!--                        <option value="ALI_CDN">阿里云-CDN</option>-->
                     </select>
                     <div class="layui-form-mid layui-text-em">根据域名所在位置，选择部署类型</div>
                 </div>
@@ -249,6 +250,7 @@
                             return d.log ? '<div style="white-space: pre-wrap;">' + d.log + '</div>' : "-";
                         }
                     },
+                    {field: 'nextExecuteTime', title: '下次执行时间', minWidth: 150},
                     {title: '操作', toolbar: "#row-tool", width: 200}
                 ]
             ],

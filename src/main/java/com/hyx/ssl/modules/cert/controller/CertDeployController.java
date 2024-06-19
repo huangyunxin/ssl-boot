@@ -2,6 +2,7 @@ package com.hyx.ssl.modules.cert.controller;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyx.ssl.modules.cert.entity.CertDeployEntity;
@@ -11,6 +12,7 @@ import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +38,15 @@ public class CertDeployController {
      * 列表
      */
     @GetMapping
-    public R<Page<CertDeployEntity>> list(Page<CertDeployEntity> page) {
-        return R.data(certDeployService.page(page, Wrappers.lambdaQuery(CertDeployEntity.class)
-            .orderByDesc(CertDeployEntity::getId)));
+    public R<Page<CertDeployEntity>> list(Page<CertDeployEntity> pageParam) {
+        Page<CertDeployEntity> page = certDeployService.page(pageParam, Wrappers.lambdaQuery(CertDeployEntity.class)
+            .orderByDesc(CertDeployEntity::getId));
+        //添加是否自动执行
+        page.getRecords().forEach(item -> {
+            R<Date> r = certDeployService.getNextExecuteTime(item);
+            item.setNextExecuteTime(r.isSuccess() ? DateUtil.formatDateTime(r.getData()) : r.getMsg());
+        });
+        return R.data(page);
     }
 
     /**

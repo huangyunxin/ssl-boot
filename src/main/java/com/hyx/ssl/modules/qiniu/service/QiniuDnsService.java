@@ -166,7 +166,7 @@ public class QiniuDnsService {
         if (StrUtil.isBlank(oldCertId)) {
             //开启https
             R<JSONObject> enabledHttpsRes = this.enabledHttps(accessKey, secretKey, domain,
-                certId, false, false);
+                certId, false, true);
             if (!enabledHttpsRes.isSuccess()) {
                 throw new Exception(enabledHttpsRes.getMsg());
             }

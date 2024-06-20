@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * 阿里云oss服务
+ * 阿里云oss部署证书
  */
 @Service
 @AllArgsConstructor

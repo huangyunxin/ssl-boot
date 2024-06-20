@@ -41,7 +41,7 @@ public class CertInfoServiceImpl extends ServiceImpl<CertInfoMapper, CertInfoEnt
         StringBuffer log = new StringBuffer(StrUtil.format("==========更新开始 {}==========", DateUtil.formatDateTime(new Date())));
         try {
             if (entity == null) {
-                throw new RuntimeException("更新失败：数据不存在");
+                throw new Exception("更新失败：数据不存在");
             }
 
             //重置数据
@@ -114,7 +114,7 @@ public class CertInfoServiceImpl extends ServiceImpl<CertInfoMapper, CertInfoEnt
                     .filter(StrUtil::isNotBlank)
                     .collect(Collectors.toSet());
                 if (CollUtil.isEmpty(domains)) {
-                    throw new RuntimeException("域名不能为空");
+                    throw new Exception("域名不能为空");
                 }
 
                 order = account.newOrder()
@@ -144,7 +144,7 @@ public class CertInfoServiceImpl extends ServiceImpl<CertInfoMapper, CertInfoEnt
                         .addDomainRecord(entity, domainRoot, rrKeyWord, "TXT", digest);
                     if (!dnsR.isSuccess()) {
                         log.append(StrUtil.format("\n设置DNS异常：{}", dnsR.getMsg()));
-                        throw new RuntimeException(dnsR.getMsg());
+                        throw new Exception(dnsR.getMsg());
                     }
 
                     //触发DNS验证

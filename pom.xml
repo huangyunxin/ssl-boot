@@ -115,6 +115,12 @@
             <artifactId>cdn20180510</artifactId>
             <version>3.4.1</version>
         </dependency>
+        <!--七牛云-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.15.0</version>
+        </dependency>
     </dependencies>
 
     <build>

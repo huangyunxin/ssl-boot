@@ -6,7 +6,6 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyx.ssl.modules.cert.entity.CertDeployEntity;
-import com.hyx.ssl.modules.cert.enums.CertStatusEnum;
 import com.hyx.ssl.modules.cert.service.ICertDeployService;
 import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
@@ -109,10 +108,6 @@ public class CertDeployController {
         CertDeployEntity certDeploy = certDeployService.getById(entity.getId());
         if (certDeploy == null) {
             return R.fail("数据不存在");
-        }
-
-        if (CertStatusEnum.UNDERWAY.name().equals(certDeploy.getStatus())) {
-            return R.fail("部署失败，当前正在部署中，请稍后再试");
         }
 
         //部署证书

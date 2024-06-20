@@ -8,7 +8,9 @@ public enum DeployTypeEnum {
      * 部署类型
      */
     ALI_OSS("阿里云-对象存储"),
-    ALI_CDN("阿里云-CDN");
+    ALI_CDN("阿里云-CDN"),
+    QINIU_CDN("七牛-CDN"),
+    ;
 
     private String info;
 

@@ -34,20 +34,20 @@ public class CertDeployServiceImpl extends ServiceImpl<CertDeployMapper, CertDep
         CertInfoEntity certInfo = null;
         try {
             if (entity == null) {
-                throw new RuntimeException("部署失败：数据不存在");
+                throw new Exception("部署失败：数据不存在");
             }
 
             certInfo = certInfoService.getById(entity.getCertId());
             if (certInfo == null) {
-                throw new RuntimeException("部署失败：证书信息不存在");
+                throw new Exception("部署失败：证书信息不存在");
             }
 
             if (!StrUtil.isAllNotBlank(certInfo.getPublicKey(), certInfo.getPrivateKey())) {
-                throw new RuntimeException("部署失败：证书秘钥未生成");
+                throw new Exception("部署失败：证书秘钥未生成");
             }
 
             if (certInfo.getValidityDateEnd() == null || certInfo.getValidityDateEnd().before(new Date())) {
-                throw new RuntimeException("部署失败：证书已失效");
+                throw new Exception("部署失败：证书已失效");
             }
 
             //重置数据
@@ -66,7 +66,7 @@ public class CertDeployServiceImpl extends ServiceImpl<CertDeployMapper, CertDep
 
             R<Object> deployR = deployStrategyFactory.getCardStrategy(entity.getType()).deploy(entity);
             if (!deployR.isSuccess()) {
-                throw new RuntimeException(deployR.getMsg());
+                throw new Exception(deployR.getMsg());
             }
 
             entity.setStatus(CertStatusEnum.DONE.name());

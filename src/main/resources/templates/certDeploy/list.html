@@ -48,6 +48,7 @@
                         <option value="">无</option>
                         <option value="ALI_OSS">阿里云-对象存储</option>
                         <option value="ALI_CDN">阿里云-CDN</option>
+                        <option value="QINIU_CDN">七牛云-CDN</option>
                     </select>
                     <div class="layui-form-mid layui-text-em">根据域名所在位置，选择部署类型</div>
                 </div>
@@ -98,6 +99,24 @@
                     <div class="layui-form-mid layui-text-em">
                         国内一般填写 cdn.aliyuncs.com 参考官方文档 https://api.aliyun.com/product/Cdn
                     </div>
+                </div>
+            </div>
+            <div class="layui-form-item qiniu-cdn-group">
+                <label class="layui-form-label">七牛云AccessKey</label>
+                <div class="layui-input-block">
+                    <input type="text" name="qiniuAccessKey" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
+                </div>
+            </div>
+            <div class="layui-form-item qiniu-cdn-group">
+                <label class="layui-form-label">七牛云SecretKey</label>
+                <div class="layui-input-block">
+                    <input type="text" name="qiniuSecretKey" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -224,6 +243,8 @@
                                     return "阿里云-对象存储";
                                 case "ALI_CDN":
                                     return "阿里云-CDN";
+                                case "QINIU_CDN":
+                                    return "七牛云-CDN";
                                 default:
                                     return "-";
                             }
@@ -492,6 +513,10 @@
         let aliCdnGroup = $(".ali-cdn-group");
         aliCdnGroup.hide();
         aliCdnGroup.find("input").removeAttr("lay-verify");
+        //七牛云CDN
+        let qiniuCdnGroup = $(".qiniu-cdn-group");
+        qiniuCdnGroup.hide();
+        qiniuCdnGroup.find("input").removeAttr("lay-verify");
 
         if (value === "ALI_OSS") {
             aliOssGroup.show();
@@ -499,6 +524,9 @@
         } else if (value === "ALI_CDN") {
             aliCdnGroup.show();
             aliCdnGroup.find("input").attr("lay-verify", "required");
+        } else if (value === "QINIU_CDN") {
+            qiniuCdnGroup.show();
+            qiniuCdnGroup.find("input").attr("lay-verify", "required");
         }
     }
 </script>

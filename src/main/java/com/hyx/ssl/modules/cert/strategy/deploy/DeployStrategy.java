@@ -8,5 +8,5 @@ public interface DeployStrategy {
     /**
      * 部署证书
      */
-    R<Object> deploy(CertDeployEntity entity);
+    R<Object> deploy(CertDeployEntity entity) throws Exception;
 }

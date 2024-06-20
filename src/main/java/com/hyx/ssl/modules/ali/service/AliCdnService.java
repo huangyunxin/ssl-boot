@@ -41,21 +41,17 @@ public class AliCdnService {
      * 部署证书
      */
     public void deploySSL(String accessKeyId, String accessKeySecret, String endpoint,
-                          String domain, String certPublicKey, String certPrivateKey) {
+                          String domain, String certPublicKey, String certPrivateKey) throws Exception {
 
-        try {
-            com.aliyun.cdn20180510.Client client = this.getClient(accessKeyId, accessKeySecret, endpoint);
-            com.aliyun.cdn20180510.models.SetCdnDomainSSLCertificateRequest setCdnDomainSSLCertificateRequest = new com.aliyun.cdn20180510.models.SetCdnDomainSSLCertificateRequest()
-                .setDomainName(domain)
-                .setCertType("upload")
-                .setSSLProtocol("on")
-                .setSSLPub(certPublicKey)
-                .setSSLPri(certPrivateKey);
-            com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
-            client.setCdnDomainSSLCertificateWithOptions(
-                setCdnDomainSSLCertificateRequest, runtime);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        com.aliyun.cdn20180510.Client client = this.getClient(accessKeyId, accessKeySecret, endpoint);
+        com.aliyun.cdn20180510.models.SetCdnDomainSSLCertificateRequest setCdnDomainSSLCertificateRequest = new com.aliyun.cdn20180510.models.SetCdnDomainSSLCertificateRequest()
+            .setDomainName(domain)
+            .setCertType("upload")
+            .setSSLProtocol("on")
+            .setSSLPub(certPublicKey)
+            .setSSLPri(certPrivateKey);
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        client.setCdnDomainSSLCertificateWithOptions(
+            setCdnDomainSSLCertificateRequest, runtime);
     }
 }

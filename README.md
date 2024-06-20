@@ -33,6 +33,12 @@
 
 ## 快速开始
 
+### 启动项目
+
 * 创建MySQL数据库，名称`ssl`，并执行`doc/mysql/mysql.sql`初始化数据库表
 * 修改配置文件`src/main/resources/application.yml`中的`spring.datasource`，配置数据库连接信息
 * 运行`Application.java`，浏览器访问`http://localhost:8080`
+
+### 使用Docker部署
+
+* [Docker部署](doc%2FdockerDeploy%2FREADME.md)

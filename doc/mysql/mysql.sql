@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS `cert_info`;
-
 CREATE TABLE `cert_info` (
   `id` bigint(20) NOT NULL COMMENT 'id',
   `name_` varchar(64) DEFAULT NULL COMMENT '名称',
@@ -21,7 +20,6 @@ CREATE TABLE `cert_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书信息表';
 
 DROP TABLE IF EXISTS `cert_deploy`;
-
 CREATE TABLE `cert_deploy` (
   `id` bigint(20) NOT NULL COMMENT 'id',
   `name_` varchar(64) DEFAULT NULL COMMENT '名称',
@@ -32,6 +30,8 @@ CREATE TABLE `cert_deploy` (
   `ali_oss_bucket` varchar(64) DEFAULT NULL COMMENT '阿里云OSS bucket',
   `ali_oss_endpoint` varchar(128) DEFAULT NULL COMMENT '阿里云OSS endpoint',
   `ali_cdn_endpoint` varchar(128) DEFAULT NULL COMMENT '阿里云CDN endpoint',
+  `qiniu_access_key` varchar(128) DEFAULT NULL COMMENT '七牛云accessKey',
+  `qiniu_secret_key` varchar(128) DEFAULT NULL COMMENT '七牛云secretKey',
   `cert_id` bigint(20) DEFAULT NULL COMMENT '证书id',
   `cert_public_key` text COMMENT '证书公钥',
   `cert_private_key` text COMMENT '证书私钥',
@@ -42,5 +42,4 @@ CREATE TABLE `cert_deploy` (
   `is_auto` tinyint(1) DEFAULT NULL COMMENT '是否自动部署',
   `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书部署表'
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书部署表';

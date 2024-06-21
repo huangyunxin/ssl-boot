@@ -2,24 +2,24 @@
 
 ## 使用场景
 
-* 现有证书在不同的云服务中使用，比如阿里云CDN、阿里云OSS、七牛云CDN等
-* 而且云服务账号有多个，每次证书到期后，需要登陆对应的账号手动申请新证书，然后手动部署到各个服务中
-* 所以需要一个自动化工具来管理证书，到期自动申请新证书，自动部署到各个服务中。
+* 现有证书在不同的地方使用，比如远程主机、阿里云CDN、阿里云OSS、七牛云CDN等
+* 而且主机有多个，云服务账号也有多个，每次证书到期后，需要登陆对应的账号手动申请新证书，然后手动部署到各个服务中
+* 所以需要一个自动化工具来管理证书，到期自动申请新证书，自动部署到各个服务中
 
 ## 项目说明
 
 * 项目基于Java SpringBoot开发，页面使用Thymeleaf模板引擎、LayUI前端框架
-* 证书服务通过acme4j客户端与Let's Encrypt集成，申请免费证书，并通过各家云服务的API或SDK添加DNS解析和部署证书
+* 证书服务通过acme4j客户端，申请Let's Encrypt免费证书，并通过各家云服务的API或SDK添加DNS解析和部署证书
 * <font color='red'>本项目接口未设置鉴权机制，不要部署在公网上，以免敏感信息泄露</font>
 
 ## 主要功能
 
-* 证书管理：HTTPS证书到期自动申请新证书（当前只支持在阿里云DNS解析的域名）
+* 证书管理：证书到期自动申请新证书（当前只支持在阿里云DNS解析的域名）
 ![img.png](doc/image/certList1.png)
 ![img.png](doc/image/certList2.png)
 ![img.png](doc/image/certList3.png)
 
-* 证书部署：将证书部署到云服务（阿里云DNS、阿里云OSS等）
+* 证书部署：将证书部署到服务器或云服务中
 ![img.png](doc/image/certDeploy1.jpg)
 ![img.png](doc/image/certDeploy2.jpg)
 ![img.png](doc/image/certDeploy3.jpg)

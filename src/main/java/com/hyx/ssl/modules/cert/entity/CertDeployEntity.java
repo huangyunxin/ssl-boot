@@ -73,6 +73,31 @@ public class CertDeployEntity implements Serializable {
     @TableField(value = "qiniu_secret_key")
     private String qiniuSecretKey;
     /**
+     * 远程服务器地址
+     */
+    @TableField(value = "server_ssh_host")
+    private String serverSshHost;
+    /**
+     * 远程服务器端口
+     */
+    @TableField(value = "server_ssh_port")
+    private Integer serverSshPort;
+    /**
+     * 远程服务器用户
+     */
+    @TableField(value = "server_ssh_user")
+    private String serverSshUser;
+    /**
+     * 远程服务器密码
+     */
+    @TableField(value = "server_ssh_password")
+    private String serverSshPassword;
+    /**
+     * 远程服务器命令
+     */
+    @TableField(value = "server_ssh_exec")
+    private String serverSshExec;
+    /**
      * 证书id
      */
     @TableField(value = "cert_id")

@@ -65,6 +65,7 @@ public class CertDeployServiceImpl extends ServiceImpl<CertDeployMapper, CertDep
             entity = this.getById(entity.getId());
 
             R<Object> deployR = deployStrategyFactory.getCardStrategy(entity.getType()).deploy(entity);
+            log.append(StrUtil.format("\n部署结果：{}", deployR.getMsg()));
             if (!deployR.isSuccess()) {
                 throw new Exception(deployR.getMsg());
             }

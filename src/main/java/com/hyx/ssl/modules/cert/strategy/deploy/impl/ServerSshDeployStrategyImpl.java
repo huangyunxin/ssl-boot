@@ -50,7 +50,7 @@ public class ServerSshDeployStrategyImpl implements DeployStrategy {
             String exec = JschUtil.exec(session, sshExec, StandardCharsets.UTF_8, outputStream);
             String error = outputStream.toString();
             if (StrUtil.isNotBlank(exec) || StrUtil.isBlank(error)) {
-                return R.status(true);
+                return R.success(StrUtil.blankToDefault(exec, "执行命令成功"));
             } else {
                 return R.fail("执行命令异常：" + error);
             }

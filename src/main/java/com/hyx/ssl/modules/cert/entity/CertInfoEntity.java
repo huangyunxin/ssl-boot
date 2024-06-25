@@ -49,6 +49,16 @@ public class CertInfoEntity implements Serializable {
     @TableField("ali_access_key_secret")
     private String aliAccountAccessKeySecret;
     /**
+     * 腾讯云secretId
+     */
+    @TableField("tencent_secret_id")
+    private String tencentSecretId;
+    /**
+     * 腾讯云secretKey
+     */
+    @TableField("tencent_secret_key")
+    private String tencentSecretKey;
+    /**
      * 账户秘钥
      */
     @TableField("account_private_key")

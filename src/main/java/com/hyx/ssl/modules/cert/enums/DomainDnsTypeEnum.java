@@ -7,7 +7,9 @@ public enum DomainDnsTypeEnum {
     /**
      * 域名解析类型
      */
-    ALI_AUTHORITY("阿里云-权威解析");
+    ALI_AUTHORITY("阿里云-权威解析"),
+    TENCENT_DNS("腾讯云-DNS解析"),
+    ;
 
     private String info;
 

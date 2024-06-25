@@ -14,7 +14,7 @@
 
 ## 主要功能
 
-* 证书管理：证书到期自动申请新证书（当前只支持在阿里云DNS解析的域名）
+* 证书管理：证书到期自动申请新证书（当前支持在阿里云DNS、腾讯云DNS解析的域名）
 ![img.png](doc/image/certList1.png)
 ![img.png](doc/image/certList2.png)
 ![img.png](doc/image/certList3.png)
@@ -23,6 +23,9 @@
 ![img.png](doc/image/certDeploy1.jpg)
 ![img.png](doc/image/certDeploy2.jpg)
 ![img.png](doc/image/certDeploy3.jpg)
+
+* 证书监控：自动获取域名到期时间，即将到期发送提醒消息（当前支持飞书机器人消息）
+![img.png](doc/image/certCheck1.jpg)
 
 ## 开发环境
 
@@ -41,4 +44,4 @@
 
 ### 使用Docker部署
 
-* [Docker部署](doc%2FdockerDeploy%2FREADME.md)
+* [Docker部署](doc%2FdockerDeploy)

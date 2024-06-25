@@ -60,6 +60,8 @@ CREATE TABLE `cert_info` (
   `domain_dns_type` varchar(32) DEFAULT NULL COMMENT '域名解析类型',
   `ali_access_key_id` varchar(128) DEFAULT NULL COMMENT '阿里云id',
   `ali_access_key_secret` varchar(128) DEFAULT NULL COMMENT '阿里云秘钥',
+  `tencent_secret_id` varchar(128) DEFAULT NULL COMMENT '腾讯云secretId',
+  `tencent_secret_key` varchar(128) DEFAULT NULL COMMENT '腾讯云secretKey',
   `account_private_key` text COMMENT '账户秘钥',
   `public_key` text COMMENT '公钥',
   `private_key` text COMMENT '私钥',

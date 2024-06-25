@@ -72,15 +72,20 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
                 throw new Exception("\n证书有效期获取失败");
             }
 
-            //如果有效期小于等于7天，并且今天没有发送提醒，则发送信息
-            if (DateUtil.betweenDay(new Date(), entity.getCertValidityDateEnd(), true) <= 7) {
-                if (entity.getLastMsgTime() == null || !DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
-                    R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity,
-                        StrUtil.format("{} 证书即将过期，到期时间 {}",
-                            StrUtil.trim(entity.getDomain()),
-                            DateUtil.formatDateTime(entity.getCertValidityDateEnd())));
-                    log.append(StrUtil.format("\n发送消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
-                    entity.setLastMsgTime(new Date());
+            //判断8-17点，则发送提醒
+            int hour = DateUtil.hour(new Date(), true);
+            if (8 <= hour && hour <= 17) {
+                //判断证书有效期是否小于等于7天
+                if (DateUtil.betweenDay(new Date(), entity.getCertValidityDateEnd(), true) <= 7) {
+                    //判断今天是否提醒过
+                    if (entity.getLastMsgTime() == null || !DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
+                        R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity,
+                            StrUtil.format("{} 证书即将过期，到期时间 {}",
+                                StrUtil.trim(entity.getDomain()),
+                                DateUtil.formatDateTime(entity.getCertValidityDateEnd())));
+                        log.append(StrUtil.format("\n发送消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
+                        entity.setLastMsgTime(new Date());
+                    }
                 }
             }
 

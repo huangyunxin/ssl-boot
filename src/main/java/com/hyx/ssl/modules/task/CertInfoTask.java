@@ -20,7 +20,7 @@ public class CertInfoTask {
     private final ICertInfoService certInfoService;
 
     @Scheduled(cron = "0 0/5 * * * ?")
-    public void reportCurrentTime() {
+    public void certInfoUpdate() {
         System.out.println("证书自动更新：开始");
         //查询需要更新的证书
         List<CertInfoEntity> list = certInfoService.list(Wrappers.lambdaQuery(CertInfoEntity.class)

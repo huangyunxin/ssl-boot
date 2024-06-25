@@ -23,4 +23,9 @@ public class TemplatesController {
     public String certDeploy() {
         return "certDeploy/list";
     }
+
+    @GetMapping("/certCheck/view")
+    public String certCheck() {
+        return "certCheck/list";
+    }
 }

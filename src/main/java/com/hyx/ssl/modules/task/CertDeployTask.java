@@ -18,7 +18,7 @@ public class CertDeployTask {
     private final ICertDeployService certDeployService;
 
     @Scheduled(cron = "0 0/5 * * * ?")
-    public void reportCurrentTime() {
+    public void certDeployUpdate() {
         System.out.println("证书自动部署：开始");
 
         //筛选需要更新的证书

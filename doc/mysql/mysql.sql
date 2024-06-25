@@ -1,3 +1,21 @@
+/*Table structure for table `cert_check` */
+
+DROP TABLE IF EXISTS `cert_check`;
+
+CREATE TABLE `cert_check` (
+  `id` bigint(20) NOT NULL COMMENT 'id',
+  `name_` varchar(64) DEFAULT NULL COMMENT '名称',
+  `domain_` varchar(512) DEFAULT NULL COMMENT '域名',
+  `cert_validity_date_start` date DEFAULT NULL COMMENT '有效期开始时间',
+  `cert_validity_date_end` date DEFAULT NULL COMMENT '有效期结束时间',
+  `msg_type` varchar(32) DEFAULT NULL COMMENT '消息提醒类型',
+  `feishu_bot_hook` varchar(256) DEFAULT NULL COMMENT '飞书机器人Webhook地址',
+  `last_msg_time` datetime DEFAULT NULL COMMENT '最近消息时间',
+  `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
+  `log_` text COMMENT '日志',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书监控表';
+
 /*Table structure for table `cert_deploy` */
 
 DROP TABLE IF EXISTS `cert_deploy`;

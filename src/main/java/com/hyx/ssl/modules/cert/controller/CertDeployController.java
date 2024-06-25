@@ -112,6 +112,6 @@ public class CertDeployController {
 
         //部署证书
         certDeployService.deployCert(certDeploy);
-        return R.fail("执行中，请稍后查看日志");
+        return R.fail("执行完毕，请查看日志");
     }
 }

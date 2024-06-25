@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>证书监控</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+<blockquote class="layui-elem-quote layui-text">
+    定时器每10分钟执行一次，如果证书有效期小于等于7天，并且当天没有提醒，则发送提醒信息。
+</blockquote>
+<table class="layui-hide" id="view-table"></table>
+<!--表单-->
+<div id="detail-view" style="padding: 30px;display: none;">
+    <form id="detail-form" class="layui-form" lay-filter="detail-form-filter">
+        <!--填写项-->
+        <div id="edit-group">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">id</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" lay-verify="required" placeholder="请输入" autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">名称随意填写</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">域名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="domain" lay-verify="required" placeholder="请输入" autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">
+                        需要部署的域名，不要带http://或https://前缀，例：test.example.com
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息提醒类型</label>
+                <div class="layui-input-block">
+                    <select name="msgType" lay-filter="msgTypeFilter">
+                        <option value="">无</option>
+                        <option value="FEISHU_BOT_HOOK">飞书机器人</option>
+                    </select>
+                </div>
+            </div>
+            <!--飞书机器人相关参数-->
+            <div class="layui-form-item ali-oss-group feishu_bot_hook-group">
+                <label class="layui-form-label">飞书机器人Webhook地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="feishuBotHook" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">例：https://open.feishu.cn/open-apis/bot/v2/hook/xxx</div>
+                </div>
+            </div>
+        </div>
+        <!--只读项-->
+        <div id="readonly-group">
+            <div class="layui-form-item">
+                <label class="layui-form-label">证书有效期开始时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="certValidityDateStart" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">证书有效期结束时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="certValidityDateEnd" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">最近执行时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lastExecuteTime" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">最近提醒时间</label>
+                <div class="layui-input-block">
+                    <input type="text" name="lastMsgTime" placeholder="自动生成"
+                           autocomplete="off"
+                           class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">执行日志</label>
+                <div class="layui-input-block">
+                    <textarea name="log" placeholder="自动生成" class="layui-textarea" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+<script type="text/html" id="top-tool">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-sm" lay-event="add">新增</a>
+    </div>
+</script>
+<script type="text/html" id="row-tool">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-sm" lay-event="view">查看</a>
+        <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-sm" lay-event="deleted">删除</a>
+        <br/>
+        <a class="layui-btn layui-btn-sm" lay-event="updateAndSendMsg" style="margin-top: 10px;">立即更新信息</a>
+    </div>
+</script>
+<script>
+    var $ = layui.$;
+    var form = layui.form;
+
+    layui.use('table', function () {
+        var table = layui.table;
+
+        // 渲染
+        table.render({
+            elem: '#view-table',
+            url: '/certCheck',
+            page: true,
+            request: {
+                "pageName": "current",
+                "limitName": "size"
+            },
+            response: {
+                statusCode: 200 // 重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            cols: [
+                [
+                    {field: 'name', title: '名称', minWidth: 200},
+                    {field: 'domain', title: '域名', minWidth: 200},
+                    {field: 'certValidityDateStart', title: '证书有效期开始时间', minWidth: 150},
+                    {field: 'certValidityDateEnd', title: '证书有效期结束时间', minWidth: 150},
+                    {field: 'lastMsgTime', title: '最近提醒时间', minWidth: 150},
+                    {field: 'lastExecuteTime', title: '最近执行时间', minWidth: 150},
+                    {
+                        field: 'log', title: '执行日志', minWidth: 300, templet: function (d) {
+                            return d.log ? '<div style="white-space: pre-wrap;">' + d.log + '</div>' : "-";
+                        }
+                    },
+                    {title: '操作', toolbar: "#row-tool", width: 200}
+                ]
+            ],
+            // 将原始数据解析成 table 组件所规定的数据格式
+            parseData: function (res) {
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.data.total, //解析数据长度
+                    "data": res.data.records //解析数据列表
+                };
+            },
+            height: "full-30",
+            lineStyle: "height:100px",
+            defaultToolbar: [],
+            toolbar: '#top-tool'
+        });
+
+        // 工具栏事件
+        table.on('toolbar(view-table)', function (obj) {
+            let event = obj.event;
+            //新增
+            if (event === "add") {
+                addForm();
+            }
+        });
+
+        // 触发单元格工具事件
+        table.on('tool(view-table)', function (obj) {
+            var data = obj.data; // 获得当前行数据
+            if (obj.event === 'view') {
+                viewForm(data.id);
+            } else if (obj.event === 'edit') {
+                editForm(data.id);
+            } else if (obj.event === 'deleted') {
+                deleteForm(data.id);
+            } else if (obj.event === 'updateAndSendMsg') {
+                updateAndSendMsg(data.id);
+            }
+        });
+    });
+
+    //查看表单
+    function viewForm(id) {
+        //清空表单
+        $("#detail-form")[0].reset();
+        //显示只读项
+        $("#readonly-group").show();
+        setForm(id);
+        layer.open({
+            title: '查看',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view")
+        });
+    }
+
+    //新增表单
+    function addForm() {
+        //清空表单
+        $("#detail-form")[0].reset();
+        //隐藏只读项
+        $("#readonly-group").hide();
+        layer.open({
+            title: '新增',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view"),
+            btn: ['保存', '取消'],
+            btn1: function (index, layero, that) {
+                submitForm(index);
+            }
+        });
+    }
+
+    //编辑表单
+    function editForm(id) {
+        //清空表单
+        $("#detail-form")[0].reset();
+        setForm(id);
+        //隐藏只读项
+        $("#readonly-group").hide();
+        layer.open({
+            title: '编辑',
+            type: 1,
+            area: ['80%', '90%'],
+            content: $("#detail-view"),
+            btn: ['保存', '取消'],
+            btn1: function (index, layero, that) {
+                submitForm(index);
+            }
+        });
+    }
+
+    //删除表单
+    function deleteForm(id) {
+        let deletedIndex = layer.confirm('确认删除吗？', {
+            btn: ['确定', '关闭'] //按钮
+        }, function () {
+            $.ajax({
+                url: '/certCheck', // 替换为你的API端点
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({ids: [id]}),
+                success: function (res) {
+                    layer.msg(res.msg);
+                    //刷新table
+                    layui.table.reload('view-table', {
+                        page: {
+                            curr: $(".layui-laypage-em").next().html()
+                        }
+                    });
+                    layer.close(deletedIndex);
+                }
+            });
+        });
+    }
+
+    //表单赋值
+    function setForm(id) {
+        $.get("/certCheck/" + id, function (res) {
+            if (res.success && res.code === 200) {
+                form.val('detail-form-filter', res.data);
+                msgTypeShow();
+            } else {
+                layer.msg(res.msg);
+            }
+        });
+    }
+
+    //表单提交
+    function submitForm(layerOpenIndex) {
+        //表单验证
+        var isValid = form.validate('#detail-form');
+        // 验证通过
+        if (isValid) {
+            let formObj = form.val('detail-form-filter');
+            //只读项不提交
+            $("#readonly-group").find("input,textarea,select").each(function (index, item) {
+                delete formObj[$(item).attr("name")];
+            });
+            $.post({
+                url: "/certCheck",
+                contentType: 'application/json',
+                data: JSON.stringify(formObj),
+                success: function (res) {
+                    layer.msg(res.msg);
+                    if (res.success && res.code === 200) {
+                        //刷新table
+                        layui.table.reload('view-table', {
+                            page: {
+                                curr: $(".layui-laypage-em").next().html()
+                            }
+                        });
+                        if (layerOpenIndex) {
+                            layer.close(layerOpenIndex);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    layer.msg("提交失败");
+                }
+            });
+        }
+    }
+
+    //立即更新信息
+    function updateAndSendMsg(id) {
+        let openIndex = layer.confirm('确认立即更新信息吗？', {
+            btn: ['确定', '关闭'] //按钮
+        }, function () {
+            var loadIndex = layer.load(2, {
+                title: 'Hello layer',
+                shade: 0.6, // 遮罩透明度
+            });
+
+            $.post({
+                url: "/certCheck/updateAndSendMsg",
+                contentType: 'application/json',
+                data: JSON.stringify({id: id}),
+                success: function (res) {
+                    layer.msg(res.msg);
+                    //刷新table
+                    layui.table.reload('view-table', {
+                        page: {
+                            curr: $(".layui-laypage-em").next().html()
+                        }
+                    });
+                    layer.close(loadIndex);
+                    layer.close(openIndex);
+                }
+            });
+        });
+    }
+
+    //部署类型显隐
+    msgTypeShow();
+    form.on('select(msgTypeFilter)', function () {
+        msgTypeShow()
+    });
+
+    //部署类型显隐
+    function msgTypeShow() {
+        let value = $("select[name='msgType']").val();
+
+        //飞书机器人
+        let feishuBotHookGroup = $(".feishu_bot_hook-group");
+        feishuBotHookGroup.hide();
+        feishuBotHookGroup.find("input").removeAttr("lay-verify");
+
+        if (value === "FEISHU_BOT_HOOK") {
+            feishuBotHookGroup.show();
+            feishuBotHookGroup.find("input").attr("lay-verify", "required");
+        }
+    }
+</script>

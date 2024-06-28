@@ -1,6 +1,7 @@
 package com.hyx.ssl.modules.cert.strategy.dns.impl;
 
 import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
+import com.hyx.ssl.modules.cert.enums.DomainRecordTypeEnum;
 import com.hyx.ssl.modules.cert.strategy.dns.DnsStrategy;
 import com.hyx.ssl.modules.tencent.service.TencentDnsService;
 import com.hyx.ssl.tool.api.R;
@@ -16,14 +17,25 @@ public class TencentDnsStrategyImpl implements DnsStrategy {
     private final TencentDnsService tencentDnsService;
 
     @Override
-    public R<Object> addDomainRecord(CertInfoEntity entity, String domain, String subdomain, String type, String value) {
+    public R<Object> addDomainRecord(CertInfoEntity entity, String domain, String domainPrefix,
+                                     DomainRecordTypeEnum type, String value) {
         try {
-            tencentDnsService.addDomainRecord(entity.getTencentSecretId(), entity.getTencentSecretKey(),
-                domain, subdomain, type, value);
+            return tencentDnsService.addDomainRecord(entity.getTencentSecretId(), entity.getTencentSecretKey(),
+                domain, domainPrefix, type.name(), value);
         } catch (Exception e) {
             e.printStackTrace();
             return R.fail(e.getMessage());
         }
-        return R.status(true);
+    }
+
+    @Override
+    public R<Object> deleteDomainRecord(CertInfoEntity entity, String domain, String domainPrefix) {
+        try {
+            return tencentDnsService.deleteDomainRecord(entity.getTencentSecretId(), entity.getTencentSecretKey(),
+                domain, domainPrefix);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail(e.getMessage());
+        }
     }
 }

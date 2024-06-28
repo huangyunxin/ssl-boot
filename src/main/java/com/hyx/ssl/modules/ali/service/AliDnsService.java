@@ -80,4 +80,17 @@ public class AliDnsService {
         }
         return R.status(true);
     }
+
+    /**
+     * 删除域名解析
+     */
+    public R<Object> deleteDomainRecord(String accessKeyId, String accessKeySecret, String domain, String rrKeyWord) throws Exception {
+        Client client = this.getClient(accessKeyId, accessKeySecret);
+
+        DeleteSubDomainRecordsRequest request = new DeleteSubDomainRecordsRequest()
+            .setDomainName(domain)
+            .setRR(rrKeyWord);
+        client.deleteSubDomainRecordsWithOptions(request, new RuntimeOptions());
+        return R.status(true);
+    }
 }

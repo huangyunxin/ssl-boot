@@ -41,6 +41,7 @@ public class TencentDnsService {
             DescribeRecordListResponse searchResp = client.DescribeRecordList(searchReq);
             oldRecord = ArrayUtil.get(searchResp.getRecordList(), 0);
         } catch (Exception e) {
+            //查询结果为空会抛异常
         }
 
         if (oldRecord == null) {
@@ -67,6 +68,45 @@ public class TencentDnsService {
                 client.ModifyRecord(req);
             }
         }
+        return R.status(true);
+    }
+
+    /**
+     * 删除域名解析
+     */
+    public R<Object> deleteDomainRecord(String secretId, String secretKey, String domain, String subdomain) throws Exception {
+
+        Credential cred = new Credential(secretId, secretKey);
+        // 实例化一个http选项，可选的，没有特殊需求可以跳过
+        HttpProfile httpProfile = new HttpProfile();
+        httpProfile.setEndpoint("dnspod.tencentcloudapi.com");
+        // 实例化一个client选项，可选的，没有特殊需求可以跳过
+        ClientProfile clientProfile = new ClientProfile();
+        clientProfile.setHttpProfile(httpProfile);
+        // 实例化要请求产品的client对象,clientProfile是可选的
+        DnspodClient client = new DnspodClient(cred, "", clientProfile);
+        //查询记录
+        RecordListItem[] recordList = null;
+        try {
+            DescribeRecordListRequest searchReq = new DescribeRecordListRequest();
+            searchReq.setDomain(domain);
+            searchReq.setSubdomain(subdomain);
+            DescribeRecordListResponse searchResp = client.DescribeRecordList(searchReq);
+            recordList = searchResp.getRecordList();
+        } catch (Exception e) {
+            throw e;
+        }
+
+        //删除记录
+        if (ArrayUtil.isNotEmpty(recordList)) {
+            for (RecordListItem recordListItem : recordList) {
+                DeleteRecordRequest req = new DeleteRecordRequest();
+                req.setDomain(domain);
+                req.setRecordId(recordListItem.getRecordId());
+                client.DeleteRecord(req);
+            }
+        }
+
         return R.status(true);
     }
 }

@@ -46,12 +46,11 @@
                 <div class="layui-input-block">
                     <select name="msgType" lay-filter="msgTypeFilter">
                         <option value="">无</option>
-                        <option value="FEISHU_BOT_HOOK">飞书机器人</option>
                     </select>
                 </div>
             </div>
             <!--飞书机器人相关参数-->
-            <div class="layui-form-item ali-oss-group feishu_bot_hook-group">
+            <div class="layui-form-item feishu_bot_hook-group">
                 <label class="layui-form-label">飞书机器人Webhook地址</label>
                 <div class="layui-input-block">
                     <input type="text" name="feishuBotHook" lay-verify="required" placeholder="请输入"
@@ -123,6 +122,25 @@
 <script>
     var $ = layui.$;
     var form = layui.form;
+
+    //动态获取类型
+    let typeKeyMap = {};
+    $.ajax({
+        url: '/dict/enums/msgTypeEnum', // 替换为你的API端点
+        type: 'GET',
+        async: false, //请求完再向下执行
+        success: function (res) {
+            if (res.success) {
+                //添加类型下拉
+                res.data.forEach(function (item) {
+                    $("select[name='msgType']").append("<option value='" + item.key + "'>" + item.info + "</option>")
+                    typeKeyMap[item.key] = item.info;
+                });
+            } else {
+                layer.msg("类型获取失败");
+            }
+        }
+    });
 
     layui.use('table', function () {
         var table = layui.table;

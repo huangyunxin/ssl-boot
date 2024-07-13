@@ -48,8 +48,6 @@
                 <div class="layui-input-block">
                     <select name="domainDnsType" lay-verify="required" lay-filter="domainDnsTypeFilter">
                         <option value="">无</option>
-                        <option value="ALI_AUTHORITY">阿里云-权威解析</option>
-                        <option value="TENCENT_DNS">腾讯云-DNS解析</option>
                     </select>
                     <div class="layui-form-mid layui-text-em">当前支持在阿里云DNS或腾讯云DNS解析的域名</div>
                 </div>
@@ -193,6 +191,25 @@
     var $ = layui.$;
     var form = layui.form;
 
+    //动态获取类型
+    let typeKeyMap = {};
+    $.ajax({
+        url: '/dict/enums/domainDnsTypeEnum', // 替换为你的API端点
+        type: 'GET',
+        async: false, //请求完再向下执行
+        success: function (res) {
+            if (res.success) {
+                //添加类型下拉
+                res.data.forEach(function (item) {
+                    $("select[name='domainDnsType']").append("<option value='" + item.key + "'>" + item.info + "</option>")
+                    typeKeyMap[item.key] = item.info;
+                });
+            } else {
+                layer.msg("类型获取失败");
+            }
+        }
+    });
+
     layui.use('table', function () {
         var table = layui.table;
 
@@ -214,14 +231,7 @@
                     {field: 'domain', title: '域名', minWidth: 200},
                     {
                         field: 'domainDnsType', title: '解析类型', minWidth: 150, templet: function (d) {
-                            switch (d.domainDnsType) {
-                                case "ALI_AUTHORITY":
-                                    return "阿里云-权威解析";
-                                case "TENCENT_DNS":
-                                    return "腾讯云-DNS解析";
-                                default:
-                                    return "-";
-                            }
+                            return typeKeyMap[d.domainDnsType];
                         }
                     },
                     {

@@ -46,10 +46,6 @@
                 <div class="layui-input-block">
                     <select name="type" lay-verify="required" lay-filter="typeFilter">
                         <option value="">无</option>
-                        <option value="ALI_OSS">阿里云-对象存储</option>
-                        <option value="ALI_CDN">阿里云-CDN</option>
-                        <option value="QINIU_CDN">七牛云-CDN</option>
-                        <option value="SERVER_SSH">远程服务器SSH</option>
                     </select>
                     <div class="layui-form-mid layui-text-em">
                         根据域名所在位置，选择部署类型：
@@ -290,6 +286,25 @@
     var $ = layui.$;
     var form = layui.form;
 
+    //动态获取类型
+    let typeKeyMap = {};
+    $.ajax({
+        url: '/dict/enums/deployTypeEnum', // 替换为你的API端点
+        type: 'GET',
+        async: false, //请求完再向下执行
+        success: function (res) {
+            if (res.success) {
+                //添加类型下拉
+                res.data.forEach(function (item) {
+                    $("select[name='type']").append("<option value='" + item.key + "'>" + item.info + "</option>")
+                    typeKeyMap[item.key] = item.info;
+                });
+            } else {
+                layer.msg("类型获取失败");
+            }
+        }
+    });
+
     layui.use('table', function () {
         var table = layui.table;
 
@@ -311,18 +326,7 @@
                     {field: 'domain', title: '域名', minWidth: 200},
                     {
                         field: 'type', title: '部署类型', minWidth: 150, templet: function (d) {
-                            switch (d.type) {
-                                case "ALI_OSS":
-                                    return "阿里云-对象存储";
-                                case "ALI_CDN":
-                                    return "阿里云-CDN";
-                                case "QINIU_CDN":
-                                    return "七牛云-CDN";
-                                case "SERVER_SSH":
-                                    return "远程服务器SSH";
-                                default:
-                                    return "-";
-                            }
+                            return typeKeyMap[d.type];
                         }
                     },
                     {

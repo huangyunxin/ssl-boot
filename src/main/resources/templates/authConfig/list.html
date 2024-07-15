@@ -3,14 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>证书监控</title>
+    <title>服务配置</title>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
     <script th:src="@{/layui/layui.js}"></script>
-    <script th:src="@{/js/authConfig.js}"></script>
 </head>
 <body>
 <blockquote class="layui-elem-quote layui-text">
-    定时器每10分钟执行一次，如果证书有效期小于等于7天，并且当天没有提醒，则在08-17点发送提醒信息。
+    在此录入阿里云、腾讯云、七牛云、SSH等配置信息。
 </blockquote>
 <table class="layui-hide" id="view-table"></table>
 <!--表单-->
@@ -33,70 +32,78 @@
                 </div>
             </div>
             <div class="layui-form-item">
-                <label class="layui-form-label">域名</label>
+                <label class="layui-form-label">类型</label>
                 <div class="layui-input-block">
-                    <input type="text" name="domain" lay-verify="required" placeholder="请输入" autocomplete="off"
+                    <select name="type" lay-verify="required" lay-filter="typeFilter">
+                        <option value="">无</option>
+                    </select>
+                </div>
+            </div>
+            <!--云服务相关参数-->
+            <div class="layui-form-item ali-group tencent-group qiniu-group">
+                <label class="layui-form-label">accessKey</label>
+                <div class="layui-input-block">
+                    <input type="text" name="accessKey" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
                            class="layui-input">
-                    <div class="layui-form-mid layui-text-em">
-                        需要部署的域名，不要带http://或https://前缀，例：test.example.com
-                    </div>
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">消息提醒类型</label>
+            <div class="layui-form-item ali-group tencent-group qiniu-group">
+                <label class="layui-form-label">secretKey</label>
                 <div class="layui-input-block">
-                    <select name="msgType" lay-filter="msgTypeFilter">
-                        <option value="">无</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">服务配置</label>
-                <div class="layui-input-block">
-                    <select name="authConfigId" lay-verify="required">
-                        <option value="">无</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <!--只读项-->
-        <div id="readonly-group">
-            <div class="layui-form-item">
-                <label class="layui-form-label">证书有效期开始时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="certValidityDateStart" placeholder="自动生成"
+                    <input type="text" name="secretKey" lay-verify="required" placeholder="请输入"
                            autocomplete="off"
-                           class="layui-input" disabled>
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">证书有效期结束时间</label>
+            <!--远程服务器SSH相关参数-->
+            <div class="layui-form-item server-ssh-group">
+                <label class="layui-form-label">服务器地址</label>
                 <div class="layui-input-block">
-                    <input type="text" name="certValidityDateEnd" placeholder="自动生成"
+                    <input type="text" name="serverSshHost" lay-verify="required" placeholder="请输入"
                            autocomplete="off"
-                           class="layui-input" disabled>
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">服务器IP地址，例如：10.10.1.1</div>
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">最近执行时间</label>
+            <div class="layui-form-item server-ssh-group">
+                <label class="layui-form-label">服务器端口</label>
                 <div class="layui-input-block">
-                    <input type="text" name="lastExecuteTime" placeholder="自动生成"
+                    <input type="text" name="serverSshPort" lay-verify="required"
+                           placeholder="请输入"
                            autocomplete="off"
-                           class="layui-input" disabled>
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">服务器SSH连接端口，例如：22</div>
                 </div>
             </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">最近提醒时间</label>
+            <div class="layui-form-item server-ssh-group">
+                <label class="layui-form-label">服务器用户</label>
                 <div class="layui-input-block">
-                    <input type="text" name="lastMsgTime" placeholder="自动生成"
+                    <input type="text" name="serverSshUser" lay-verify="required" placeholder="请输入"
                            autocomplete="off"
-                           class="layui-input" disabled>
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">登陆服务器的用户名</div>
                 </div>
             </div>
-            <div class="layui-form-item layui-form-text">
-                <label class="layui-form-label">执行日志</label>
+            <div class="layui-form-item server-ssh-group">
+                <label class="layui-form-label">服务器密码</label>
                 <div class="layui-input-block">
-                    <textarea name="log" placeholder="自动生成" class="layui-textarea" disabled></textarea>
+                    <input type="text" name="serverSshPassword" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">登陆服务器的密码</div>
+                </div>
+            </div>
+            <!--飞书机器人相关参数-->
+            <div class="layui-form-item feishu_bot_hook-group">
+                <label class="layui-form-label">飞书机器人Webhook地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="feishuBotHook" lay-verify="required" placeholder="请输入"
+                           autocomplete="off"
+                           class="layui-input">
+                    <div class="layui-form-mid layui-text-em">例：https://open.feishu.cn/open-apis/bot/v2/hook/xxx</div>
                 </div>
             </div>
         </div>
@@ -114,8 +121,6 @@
         <a class="layui-btn layui-btn-sm" lay-event="view">查看</a>
         <a class="layui-btn layui-btn-sm" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-sm" lay-event="deleted">删除</a>
-        <br/>
-        <a class="layui-btn layui-btn-sm" lay-event="updateAndSendMsg" style="margin-top: 10px;">立即更新信息</a>
     </div>
 </script>
 <script>
@@ -125,14 +130,14 @@
     //动态获取类型
     let typeKeyMap = {};
     $.ajax({
-        url: '/dict/enums/msgTypeEnum', // 替换为你的API端点
+        url: '/dict/enums/authConfigTypeEnum', // 替换为你的API端点
         type: 'GET',
         async: false, //请求完再向下执行
         success: function (res) {
             if (res.success) {
                 //添加类型下拉
                 res.data.forEach(function (item) {
-                    $("select[name='msgType']").append("<option value='" + item.key + "'>" + item.info + "</option>")
+                    $("select[name='type']").append("<option value='" + item.key + "'>" + item.info + "</option>")
                     typeKeyMap[item.key] = item.info;
                 });
             } else {
@@ -147,7 +152,7 @@
         // 渲染
         table.render({
             elem: '#view-table',
-            url: '/certCheck',
+            url: '/authConfig',
             page: true,
             request: {
                 "pageName": "current",
@@ -159,14 +164,9 @@
             cols: [
                 [
                     {field: 'name', title: '名称', minWidth: 200},
-                    {field: 'domain', title: '域名', minWidth: 200},
-                    {field: 'certValidityDateStart', title: '证书有效期开始时间', minWidth: 150},
-                    {field: 'certValidityDateEnd', title: '证书有效期结束时间', minWidth: 150},
-                    {field: 'lastMsgTime', title: '最近提醒时间', minWidth: 150},
-                    {field: 'lastExecuteTime', title: '最近执行时间', minWidth: 150},
                     {
-                        field: 'log', title: '执行日志', minWidth: 300, templet: function (d) {
-                            return d.log ? '<div style="white-space: pre-wrap;">' + d.log + '</div>' : "-";
+                        field: 'type', title: '类型', minWidth: 150, templet: function (d) {
+                            return typeKeyMap[d.type];
                         }
                     },
                     {title: '操作', toolbar: "#row-tool", width: 200}
@@ -182,7 +182,7 @@
                 };
             },
             height: "full-80",
-            lineStyle: "height:100px",
+            lineStyle: "height:60px",
             defaultToolbar: [],
             toolbar: '#top-tool'
         });
@@ -205,8 +205,6 @@
                 editForm(data.id);
             } else if (obj.event === 'deleted') {
                 deleteForm(data.id);
-            } else if (obj.event === 'updateAndSendMsg') {
-                updateAndSendMsg(data.id);
             }
         });
     });
@@ -269,7 +267,7 @@
             btn: ['确定', '关闭'] //按钮
         }, function () {
             $.ajax({
-                url: '/certCheck', // 替换为你的API端点
+                url: '/authConfig', // 替换为你的API端点
                 type: 'DELETE',
                 contentType: 'application/json',
                 data: JSON.stringify({ids: [id]}),
@@ -289,10 +287,10 @@
 
     //表单赋值
     function setForm(id) {
-        $.get("/certCheck/" + id, function (res) {
+        $.get("/authConfig/" + id, function (res) {
             if (res.success && res.code === 200) {
                 form.val('detail-form-filter', res.data);
-                msgTypeShow(res.data.authConfigId);
+                typeShow();
             } else {
                 layer.msg(res.msg);
             }
@@ -306,12 +304,8 @@
         // 验证通过
         if (isValid) {
             let formObj = form.val('detail-form-filter');
-            //只读项不提交
-            $("#readonly-group").find("input,textarea,select").each(function (index, item) {
-                delete formObj[$(item).attr("name")];
-            });
             $.post({
-                url: "/certCheck",
+                url: "/authConfig",
                 contentType: 'application/json',
                 data: JSON.stringify(formObj),
                 success: function (res) {
@@ -335,59 +329,38 @@
         }
     }
 
-    //立即更新信息
-    function updateAndSendMsg(id) {
-        let openIndex = layer.confirm('确认立即更新信息吗？', {
-            btn: ['确定', '关闭'] //按钮
-        }, function () {
-            var loadIndex = layer.load(2, {
-                title: 'Hello layer',
-                shade: 0.6, // 遮罩透明度
-            });
-
-            $.post({
-                url: "/certCheck/updateAndSendMsg",
-                contentType: 'application/json',
-                data: JSON.stringify({id: id}),
-                success: function (res) {
-                    layer.msg(res.msg);
-                    //刷新table
-                    layui.table.reload('view-table', {
-                        page: {
-                            curr: $(".layui-laypage-em").next().html()
-                        }
-                    });
-                    layer.close(loadIndex);
-                    layer.close(openIndex);
-                }
-            });
-        });
-    }
-
-    //提醒类型显隐
-    form.on('select(msgTypeFilter)', function () {
-        msgTypeShow()
+    //类型显隐
+    typeShow();
+    form.on('select(typeFilter)', function () {
+        typeShow()
     });
 
-    //提醒类型显隐
-    function msgTypeShow(selectedValue) {
-        //根据msgType动态获取服务配置
-        let value = $("select[name='msgType']").val();
-        $("select[name='authConfigId']").html("<option value=\"\">无</option>")
-        if (value) {
-            getAuthConfigListByType(value).then(res => {
-                if (res && res.length > 0) {
-                    //添加选项
-                    res.forEach(function (item) {
-                        $("select[name='authConfigId']").append("<option value='" + item.id + "'>" + item.name + "</option>")
-                    });
-                    //选中
-                    if (selectedValue) {
-                        $("select[name='authConfigId']").val(selectedValue);
-                    }
-                    form.render('select');
-                }
-            });
+    //类型显隐
+    function typeShow() {
+        let value = $("select[name='type']").val();
+
+        //阿里云、腾讯云、七牛云
+        let cloudGroup = $(".ali-group,.tencent-group,.qiniu-group");
+        cloudGroup.hide();
+        cloudGroup.find("input").removeAttr("lay-verify");
+        //远程服务器SSH
+        let serverSshGroup = $(".server-ssh-group");
+        serverSshGroup.hide();
+        serverSshGroup.find("input,textarea").removeAttr("lay-verify");
+        //飞书机器人
+        let feishuBotHookGroup = $(".feishu_bot_hook-group");
+        feishuBotHookGroup.hide();
+        feishuBotHookGroup.find("input").removeAttr("lay-verify");
+
+        if (value === "ALI" || value === "TENCENT" || value === "QINIU") {
+            cloudGroup.show();
+            cloudGroup.find("input").attr("lay-verify", "required");
+        } else if (value === "SERVER_SSH") {
+            serverSshGroup.show();
+            serverSshGroup.find("input,textarea").attr("lay-verify", "required");
+        } else if (value === "FEISHU_BOT_HOOK") {
+            feishuBotHookGroup.show();
+            feishuBotHookGroup.find("input,textarea").attr("lay-verify", "required");
         }
     }
 </script>

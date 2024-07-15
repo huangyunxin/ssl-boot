@@ -3,7 +3,7 @@ package com.hyx.ssl.modules.task;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hyx.ssl.modules.cert.entity.CertCheckEntity;
-import com.hyx.ssl.modules.cert.service.impl.ICertCheckService;
+import com.hyx.ssl.modules.cert.service.ICertCheckService;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

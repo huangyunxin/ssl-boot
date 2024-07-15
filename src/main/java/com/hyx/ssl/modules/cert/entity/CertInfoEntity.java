@@ -39,25 +39,10 @@ public class CertInfoEntity implements Serializable {
     @TableField("domain_dns_type")
     private String domainDnsType;
     /**
-     * 阿里云id
+     * 配置id
      */
-    @TableField("ali_access_key_id")
-    private String aliAccountAccessKeyId;
-    /**
-     * 阿里云秘钥
-     */
-    @TableField("ali_access_key_secret")
-    private String aliAccountAccessKeySecret;
-    /**
-     * 腾讯云secretId
-     */
-    @TableField("tencent_secret_id")
-    private String tencentSecretId;
-    /**
-     * 腾讯云secretKey
-     */
-    @TableField("tencent_secret_key")
-    private String tencentSecretKey;
+    @TableField("auth_config_id")
+    private Long authConfigId;
     /**
      * 账户秘钥
      */

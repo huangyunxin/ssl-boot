@@ -6,6 +6,7 @@
     <title>证书部署</title>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
     <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/authConfig.js}"></script>
 </head>
 <body>
 <blockquote class="layui-elem-quote layui-text">
@@ -60,25 +61,15 @@
                     </div>
                 </div>
             </div>
-            <!--阿里云相关参数-->
-            <div class="layui-form-item ali-oss-group ali-cdn-group">
-                <label class="layui-form-label">阿里云AccessKeyId</label>
+            <div class="layui-form-item">
+                <label class="layui-form-label">服务配置</label>
                 <div class="layui-input-block">
-                    <input type="text" name="aliAccessKeyId" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
+                    <select name="authConfigId" lay-verify="required">
+                        <option value="">无</option>
+                    </select>
                 </div>
             </div>
-            <div class="layui-form-item ali-oss-group ali-cdn-group">
-                <label class="layui-form-label">阿里云AccessKeySecret</label>
-                <div class="layui-input-block">
-                    <input type="text" name="aliAccessKeySecret" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
-                </div>
-            </div>
+            <!--阿里云oss相关参数-->
             <div class="layui-form-item ali-oss-group">
                 <label class="layui-form-label">阿里云OSS Bucket名称</label>
                 <div class="layui-input-block">
@@ -98,6 +89,7 @@
                     </div>
                 </div>
             </div>
+            <!--阿里云cdn相关参数-->
             <div class="layui-form-item ali-cdn-group">
                 <label class="layui-form-label">阿里云CDN Endpoint</label>
                 <div class="layui-input-block">
@@ -109,63 +101,7 @@
                     </div>
                 </div>
             </div>
-            <!--七牛云相关参数-->
-            <div class="layui-form-item qiniu-cdn-group">
-                <label class="layui-form-label">七牛云AccessKey</label>
-                <div class="layui-input-block">
-                    <input type="text" name="qiniuAccessKey" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
-                </div>
-            </div>
-            <div class="layui-form-item qiniu-cdn-group">
-                <label class="layui-form-label">七牛云SecretKey</label>
-                <div class="layui-input-block">
-                    <input type="text" name="qiniuSecretKey" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
-                </div>
-            </div>
             <!--远程服务器SSH相关参数-->
-            <div class="layui-form-item server-ssh-group">
-                <label class="layui-form-label">服务器地址</label>
-                <div class="layui-input-block">
-                    <input type="text" name="serverSshHost" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">服务器IP地址，例如：10.10.1.1</div>
-                </div>
-            </div>
-            <div class="layui-form-item server-ssh-group">
-                <label class="layui-form-label">服务器端口</label>
-                <div class="layui-input-block">
-                    <input type="text" name="serverSshPort" lay-verify="required"
-                           placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">服务器SSH连接端口，例如：22</div>
-                </div>
-            </div>
-            <div class="layui-form-item server-ssh-group">
-                <label class="layui-form-label">服务器用户</label>
-                <div class="layui-input-block">
-                    <input type="text" name="serverSshUser" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">登陆服务器的用户名</div>
-                </div>
-            </div>
-            <div class="layui-form-item server-ssh-group">
-                <label class="layui-form-label">服务器密码</label>
-                <div class="layui-input-block">
-                    <input type="text" name="serverSshPassword" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">登陆服务器的密码</div>
-                </div>
-            </div>
             <div class="layui-form-item layui-form-text server-ssh-group">
                 <label class="layui-form-label">服务器命令</label>
                 <div class="layui-input-block">
@@ -485,7 +421,7 @@
         $.get("/certDeploy/" + id, function (res) {
             if (res.success && res.code === 200) {
                 form.val('detail-form-filter', res.data);
-                typeShow();
+                typeShow(res.data.authConfigId);
             } else {
                 layer.msg(res.msg);
             }
@@ -575,15 +511,32 @@
     });
 
     //部署类型显隐
-    typeShow();
     form.on('select(typeFilter)', function () {
         typeShow()
     });
 
     //部署类型显隐
-    function typeShow() {
+    function typeShow(selectedValue) {
+        //根据type动态获取服务配置
         let value = $("select[name='type']").val();
+        $("select[name='authConfigId']").html("<option value=\"\">无</option>")
+        if (value) {
+            getAuthConfigListByType(value).then(res => {
+                if (res && res.length > 0) {
+                    //添加选项
+                    res.forEach(function (item) {
+                        $("select[name='authConfigId']").append("<option value='" + item.id + "'>" + item.name + "</option>")
+                    });
+                    //选中
+                    if (selectedValue) {
+                        $("select[name='authConfigId']").val(selectedValue);
+                    }
+                    form.render('select');
+                }
+            });
+        }
 
+        //显隐
         //阿里云OSS
         let aliOssGroup = $(".ali-oss-group");
         aliOssGroup.hide();

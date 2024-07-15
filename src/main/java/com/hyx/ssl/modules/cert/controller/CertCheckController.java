@@ -5,7 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hyx.ssl.modules.cert.entity.CertCheckEntity;
-import com.hyx.ssl.modules.cert.service.impl.ICertCheckService;
+import com.hyx.ssl.modules.cert.service.ICertCheckService;
 import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

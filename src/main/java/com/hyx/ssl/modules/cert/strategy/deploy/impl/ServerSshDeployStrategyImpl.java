@@ -3,6 +3,8 @@ package com.hyx.ssl.modules.cert.strategy.deploy.impl;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.ssh.JschUtil;
+import com.hyx.ssl.modules.auth.entity.AuthConfigEntity;
+import com.hyx.ssl.modules.auth.service.IAuthConfigService;
 import com.hyx.ssl.modules.cert.entity.CertDeployEntity;
 import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.service.ICertInfoService;
@@ -22,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 public class ServerSshDeployStrategyImpl implements DeployStrategy {
     private final ICertInfoService certInfoService;
+    private final IAuthConfigService authConfigService;
 
     @Override
     public R<Object> deploy(CertDeployEntity entity) throws Exception {
@@ -29,15 +32,20 @@ public class ServerSshDeployStrategyImpl implements DeployStrategy {
             return R.fail("deploy对象不能为空");
         }
 
-        if (!ObjUtil.isAllNotEmpty(entity.getServerSshHost(), entity.getServerSshPort(),
-            entity.getServerSshUser(), entity.getServerSshPassword(), entity.getServerSshExec())) {
+        AuthConfigEntity authConfig = authConfigService.getById(entity.getAuthConfigId());
+        if (authConfig == null) {
+            return R.fail("authConfig服务配置获取失败");
+        }
+
+        if (!ObjUtil.isAllNotEmpty(authConfig.getServerSshHost(), authConfig.getServerSshPort(),
+            authConfig.getServerSshUser(), authConfig.getServerSshPassword(), entity.getServerSshExec())) {
             return R.fail("服务器参数不能为空");
         }
 
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
 
-        Session session = JschUtil.getSession(entity.getServerSshHost(), entity.getServerSshPort(),
-            entity.getServerSshUser(), entity.getServerSshPassword());
+        Session session = JschUtil.getSession(authConfig.getServerSshHost(), authConfig.getServerSshPort(),
+            authConfig.getServerSshUser(), authConfig.getServerSshPassword());
 
         String sshExec = entity.getServerSshExec();
 

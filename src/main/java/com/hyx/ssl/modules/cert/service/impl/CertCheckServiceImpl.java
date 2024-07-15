@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hyx.ssl.modules.cert.entity.CertCheckEntity;
 import com.hyx.ssl.modules.cert.mapper.CertCheckMapper;
+import com.hyx.ssl.modules.cert.service.ICertCheckService;
 import com.hyx.ssl.modules.cert.strategy.msg.MsgStrategyFactory;
 import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;

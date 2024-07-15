@@ -1,4 +1,4 @@
-package com.hyx.ssl.modules.cert.service.impl;
+package com.hyx.ssl.modules.cert.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hyx.ssl.modules.cert.entity.CertCheckEntity;

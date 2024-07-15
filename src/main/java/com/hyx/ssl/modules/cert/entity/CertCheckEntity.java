@@ -52,10 +52,10 @@ public class CertCheckEntity implements Serializable {
     @TableField("msg_type")
     private String msgType;
     /**
-     * 飞书机器人Webhook地址
+     * 配置id
      */
-    @TableField("feishu_bot_hook")
-    private String feishuBotHook;
+    @TableField("auth_config_id")
+    private Long authConfigId;
     /**
      * 最近消息时间
      */

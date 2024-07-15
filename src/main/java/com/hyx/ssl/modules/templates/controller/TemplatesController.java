@@ -28,4 +28,9 @@ public class TemplatesController {
     public String certCheck() {
         return "certCheck/list";
     }
+
+    @GetMapping("/authConfig/view")
+    public String authConfig() {
+        return "authConfig/list";
+    }
 }

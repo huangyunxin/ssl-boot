@@ -38,15 +38,10 @@ public class CertDeployEntity implements Serializable {
     @TableField(value = "type_")
     private String type;
     /**
-     * 阿里云Access Key ID
+     * 配置id
      */
-    @TableField(value = "ali_access_key_id")
-    private String aliAccessKeyId;
-    /**
-     * 阿里云Access Key Secret
-     */
-    @TableField(value = "ali_access_key_secret")
-    private String aliAccessKeySecret;
+    @TableField("auth_config_id")
+    private Long authConfigId;
     /**
      * 阿里云OSS Bucket名称
      */
@@ -62,36 +57,6 @@ public class CertDeployEntity implements Serializable {
      */
     @TableField(value = "ali_cdn_endpoint")
     private String aliCdnEndpoint;
-    /**
-     * 七牛云accessKey
-     */
-    @TableField(value = "qiniu_access_key")
-    private String qiniuAccessKey;
-    /**
-     * 七牛云secretKey
-     */
-    @TableField(value = "qiniu_secret_key")
-    private String qiniuSecretKey;
-    /**
-     * 远程服务器地址
-     */
-    @TableField(value = "server_ssh_host")
-    private String serverSshHost;
-    /**
-     * 远程服务器端口
-     */
-    @TableField(value = "server_ssh_port")
-    private Integer serverSshPort;
-    /**
-     * 远程服务器用户
-     */
-    @TableField(value = "server_ssh_user")
-    private String serverSshUser;
-    /**
-     * 远程服务器密码
-     */
-    @TableField(value = "server_ssh_password")
-    private String serverSshPassword;
     /**
      * 远程服务器命令
      */

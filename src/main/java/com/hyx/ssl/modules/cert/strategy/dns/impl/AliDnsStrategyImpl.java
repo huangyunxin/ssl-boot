@@ -1,6 +1,8 @@
 package com.hyx.ssl.modules.cert.strategy.dns.impl;
 
 import com.hyx.ssl.modules.ali.service.AliDnsService;
+import com.hyx.ssl.modules.auth.entity.AuthConfigEntity;
+import com.hyx.ssl.modules.auth.service.IAuthConfigService;
 import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.enums.DomainRecordTypeEnum;
 import com.hyx.ssl.modules.cert.strategy.dns.DnsStrategy;
@@ -15,12 +17,18 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AliDnsStrategyImpl implements DnsStrategy {
     private final AliDnsService aliDnsService;
+    private final IAuthConfigService authConfigService;
 
     @Override
     public R<Object> addDomainRecord(CertInfoEntity entity, String domain, String domainPrefix,
                                      DomainRecordTypeEnum type, String value) {
         try {
-            return aliDnsService.addDomainRecord(entity.getAliAccountAccessKeyId(), entity.getAliAccountAccessKeySecret(),
+            AuthConfigEntity authConfig = authConfigService.getById(entity.getAuthConfigId());
+            if (authConfig == null) {
+                return R.fail("authConfig服务配置获取失败");
+            }
+
+            return aliDnsService.addDomainRecord(authConfig.getAccessKey(), authConfig.getSecretKey(),
                 domain, domainPrefix, type.name(), value);
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,7 +39,12 @@ public class AliDnsStrategyImpl implements DnsStrategy {
     @Override
     public R<Object> deleteDomainRecord(CertInfoEntity entity, String domain, String domainPrefix) {
         try {
-            return aliDnsService.deleteDomainRecord(entity.getAliAccountAccessKeyId(), entity.getAliAccountAccessKeySecret(),
+            AuthConfigEntity authConfig = authConfigService.getById(entity.getAuthConfigId());
+            if (authConfig == null) {
+                return R.fail("authConfig服务配置获取失败");
+            }
+
+            return aliDnsService.deleteDomainRecord(authConfig.getAccessKey(), authConfig.getSecretKey(),
                 domain, domainPrefix);
         } catch (Exception e) {
             e.printStackTrace();

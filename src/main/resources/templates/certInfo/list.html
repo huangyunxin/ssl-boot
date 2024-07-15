@@ -6,6 +6,7 @@
     <title>证书管理</title>
     <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
     <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/js/authConfig.js}"></script>
 </head>
 <body>
 <blockquote class="layui-elem-quote layui-text">
@@ -52,40 +53,12 @@
                     <div class="layui-form-mid layui-text-em">当前支持在阿里云DNS或腾讯云DNS解析的域名</div>
                 </div>
             </div>
-            <div class="layui-form-item ali-authority-group">
-                <label class="layui-form-label">阿里云AccessKeyId</label>
+            <div class="layui-form-item">
+                <label class="layui-form-label">服务配置</label>
                 <div class="layui-input-block">
-                    <input type="text" name="aliAccountAccessKeyId" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">用于向阿里云DNS添加解析，确保账号有相关权限</div>
-                </div>
-            </div>
-            <div class="layui-form-item ali-authority-group">
-                <label class="layui-form-label">阿里云AccessKeySecret</label>
-                <div class="layui-input-block">
-                    <input type="text" name="aliAccountAccessKeySecret" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">用于向阿里云DNS添加解析，确保账号有相关权限</div>
-                </div>
-            </div>
-            <div class="layui-form-item tencent-dns-group">
-                <label class="layui-form-label">腾讯云SecretId</label>
-                <div class="layui-input-block">
-                    <input type="text" name="tencentSecretId" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">用于向腾讯云DNS添加解析，确保账号有相关权限</div>
-                </div>
-            </div>
-            <div class="layui-form-item tencent-dns-group">
-                <label class="layui-form-label">腾讯云SecretKey</label>
-                <div class="layui-input-block">
-                    <input type="text" name="tencentSecretKey" lay-verify="required" placeholder="请输入"
-                           autocomplete="off"
-                           class="layui-input">
-                    <div class="layui-form-mid layui-text-em">用于向腾讯云DNS添加解析，确保账号有相关权限</div>
+                    <select name="authConfigId" lay-verify="required">
+                        <option value="">无</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -389,7 +362,7 @@
         $.get("/certInfo/" + id, function (res) {
             if (res.success && res.code === 200) {
                 form.val('detail-form-filter', res.data);
-                domainDnsTypeShow();
+                domainDnsTypeShow(res.data.authConfigId);
             } else {
                 layer.msg(res.msg);
             }
@@ -453,31 +426,29 @@
         });
     }
 
-
-    //域名解析类型显隐
-    domainDnsTypeShow();
+    //根据domainDnsType动态获取服务配置
     form.on('select(domainDnsTypeFilter)', function () {
         domainDnsTypeShow()
     });
 
-    //域名解析类型显隐
-    function domainDnsTypeShow() {
+    //根据domainDnsType动态获取服务配置
+    function domainDnsTypeShow(selectedValue) {
         let value = $("select[name='domainDnsType']").val();
-        //阿里云解析
-        let aliAuthorityGroup = $(".ali-authority-group");
-        aliAuthorityGroup.hide();
-        aliAuthorityGroup.find("input").removeAttr("lay-verify");
-        //腾讯云解析
-        let tencentDnsGroup = $(".tencent-dns-group");
-        tencentDnsGroup.hide();
-        tencentDnsGroup.find("input").removeAttr("lay-verify");
-
-        if (value === "ALI_AUTHORITY") {
-            aliAuthorityGroup.show();
-            aliAuthorityGroup.find("input").attr("lay-verify", "required");
-        } else if (value === "TENCENT_DNS") {
-            tencentDnsGroup.show();
-            tencentDnsGroup.find("input").attr("lay-verify", "required");
+        $("select[name='authConfigId']").html("<option value=\"\">无</option>")
+        if (value) {
+            getAuthConfigListByType(value).then(res => {
+                if (res && res.length > 0) {
+                    //添加选项
+                    res.forEach(function (item) {
+                        $("select[name='authConfigId']").append("<option value='" + item.id + "'>" + item.name + "</option>")
+                    });
+                    //选中
+                    if (selectedValue) {
+                        $("select[name='authConfigId']").val(selectedValue);
+                    }
+                    form.render('select');
+                }
+            });
         }
     }
 </script>

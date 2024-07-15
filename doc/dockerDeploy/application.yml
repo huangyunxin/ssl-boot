@@ -20,3 +20,6 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
       table-underline: true
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0

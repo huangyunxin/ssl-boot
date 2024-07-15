@@ -2,10 +2,9 @@ package com.hyx.ssl.modules.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.hyx.ssl.base.BaseEntity;
 import com.hyx.ssl.modules.auth.enums.AuthConfigTypeEnum;
 import lombok.Data;
-
-import java.io.Serializable;
 
 
 /**
@@ -13,13 +12,8 @@ import java.io.Serializable;
  */
 @Data
 @TableName("auth_config")
-public class AuthConfigEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
-    /**
-     * id
-     */
-    @TableField(value = "id")
-    private Long id;
+public class AuthConfigEntity extends BaseEntity {
+
     /**
      * 名称
      */

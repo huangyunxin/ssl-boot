@@ -13,6 +13,7 @@ CREATE TABLE `auth_config` (
   `server_ssh_user` varchar(128) DEFAULT NULL COMMENT '远程服务器用户',
   `server_ssh_password` varchar(128) DEFAULT NULL COMMENT '远程服务器密码',
   `feishu_bot_hook` varchar(256) DEFAULT NULL COMMENT '飞书机器人Webhook地址',
+  `is_deleted` tinyint(1) DEFAULT '0' COMMENT '是否已删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='服务配置表';
 
@@ -31,6 +32,7 @@ CREATE TABLE `cert_check` (
   `last_msg_time` datetime DEFAULT NULL COMMENT '最近消息时间',
   `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
   `log_` text COMMENT '日志',
+  `is_deleted` tinyint(1) DEFAULT '0' COMMENT '是否已删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书监控表';
 
@@ -57,6 +59,7 @@ CREATE TABLE `cert_deploy` (
   `log_` text COMMENT '日志',
   `is_auto` tinyint(1) DEFAULT NULL COMMENT '是否自动部署',
   `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
+  `is_deleted` tinyint(1) DEFAULT '0' COMMENT '是否已删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书部署表';
 
@@ -80,5 +83,6 @@ CREATE TABLE `cert_info` (
   `is_auto` tinyint(1) DEFAULT NULL COMMENT '是否自动更新',
   `is_test` tinyint(1) DEFAULT NULL COMMENT '是否测试',
   `last_execute_time` datetime DEFAULT NULL COMMENT '最近一次执行时间',
+  `is_deleted` tinyint(1) DEFAULT '0' COMMENT '是否已删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='证书信息表';

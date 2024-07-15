@@ -3,10 +3,9 @@ package com.hyx.ssl.modules.cert.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hyx.ssl.base.BaseEntity;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
 
 
 /**
@@ -14,14 +13,8 @@ import java.io.Serializable;
  */
 @Data
 @TableName("cert_check")
-public class CertCheckEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class CertCheckEntity extends BaseEntity {
 
-    /**
-     * id
-     */
-    @TableField("id")
-    private Long id;
     /**
      * 名称
      */

@@ -40,6 +40,11 @@ public class DomainUtil {
             return null;
         }
 
+        //特殊判断.org.cn的域名
+        if (domain.endsWith(".org.cn")) {
+            return split[split.length - 3] + "." + split[split.length - 2] + "." + split[split.length - 1];
+        }
+
         return split[split.length - 2] + "." + split[split.length - 1];
     }
 }

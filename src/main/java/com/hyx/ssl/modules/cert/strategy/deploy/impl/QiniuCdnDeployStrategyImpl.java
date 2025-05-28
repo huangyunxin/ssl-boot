@@ -8,6 +8,7 @@ import com.hyx.ssl.modules.cert.service.ICertInfoService;
 import com.hyx.ssl.modules.cert.strategy.deploy.DeployStrategy;
 import com.hyx.ssl.modules.qiniu.service.QiniuDnsService;
 import com.hyx.ssl.tool.api.R;
+import com.hyx.ssl.util.DbSecureUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,10 @@ public class QiniuCdnDeployStrategyImpl implements DeployStrategy {
             return R.fail("authConfig服务配置获取失败");
         }
 
+        String accessKey = DbSecureUtil.decryptFromDb(authConfig.getAccessKey());
+        String secretKey = DbSecureUtil.decryptFromDb(authConfig.getSecretKey());
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
-        qiniuDnsService.deploySSL(authConfig.getAccessKey(), authConfig.getSecretKey(),
+        qiniuDnsService.deploySSL(accessKey, secretKey,
             entity.getDomain(), certInfo.getPublicKey(), certInfo.getPrivateKey());
         return R.status(true);
     }

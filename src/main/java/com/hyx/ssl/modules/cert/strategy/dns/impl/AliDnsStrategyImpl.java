@@ -7,6 +7,7 @@ import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.enums.DomainRecordTypeEnum;
 import com.hyx.ssl.modules.cert.strategy.dns.DnsStrategy;
 import com.hyx.ssl.tool.api.R;
+import com.hyx.ssl.util.DbSecureUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,9 @@ public class AliDnsStrategyImpl implements DnsStrategy {
                 return R.fail("authConfig服务配置获取失败");
             }
 
-            return aliDnsService.addDomainRecord(authConfig.getAccessKey(), authConfig.getSecretKey(),
+            String accessKey = DbSecureUtil.decryptFromDb(authConfig.getAccessKey());
+            String secretKey = DbSecureUtil.decryptFromDb(authConfig.getSecretKey());
+            return aliDnsService.addDomainRecord(accessKey, secretKey,
                 domain, domainPrefix, type.name(), value);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,7 +47,9 @@ public class AliDnsStrategyImpl implements DnsStrategy {
                 return R.fail("authConfig服务配置获取失败");
             }
 
-            return aliDnsService.deleteDomainRecord(authConfig.getAccessKey(), authConfig.getSecretKey(),
+            String accessKey = DbSecureUtil.decryptFromDb(authConfig.getAccessKey());
+            String secretKey = DbSecureUtil.decryptFromDb(authConfig.getSecretKey());
+            return aliDnsService.deleteDomainRecord(accessKey, secretKey,
                 domain, domainPrefix);
         } catch (Exception e) {
             e.printStackTrace();

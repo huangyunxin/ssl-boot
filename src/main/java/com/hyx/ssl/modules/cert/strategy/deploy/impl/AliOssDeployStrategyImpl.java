@@ -8,6 +8,7 @@ import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.service.ICertInfoService;
 import com.hyx.ssl.modules.cert.strategy.deploy.DeployStrategy;
 import com.hyx.ssl.tool.api.R;
+import com.hyx.ssl.util.DbSecureUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,9 @@ public class AliOssDeployStrategyImpl implements DeployStrategy {
 
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
 
-        aliOssService.deploySSL(authConfig.getAccessKey(), authConfig.getSecretKey(),
+        String accessKey = DbSecureUtil.decryptFromDb(authConfig.getAccessKey());
+        String secretKey = DbSecureUtil.decryptFromDb(authConfig.getSecretKey());
+        aliOssService.deploySSL(accessKey, secretKey,
             entity.getAliOssEndpoint(), entity.getAliOssBucket(),
             entity.getDomain(), certInfo.getPublicKey(), certInfo.getPrivateKey());
         return R.status(true);

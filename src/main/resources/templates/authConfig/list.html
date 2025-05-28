@@ -46,7 +46,7 @@
                     <input type="text" name="accessKey" lay-verify="required" placeholder="请输入"
                            autocomplete="off"
                            class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限，留空则不修改</div>
                 </div>
             </div>
             <div class="layui-form-item ali-group tencent-group qiniu-group">
@@ -55,7 +55,7 @@
                     <input type="text" name="secretKey" lay-verify="required" placeholder="请输入"
                            autocomplete="off"
                            class="layui-input">
-                    <div class="layui-form-mid layui-text-em">确保账号有相关权限</div>
+                    <div class="layui-form-mid layui-text-em">确保账号有相关权限，留空则不修改</div>
                 </div>
             </div>
             <!--远程服务器SSH相关参数-->
@@ -90,10 +90,10 @@
             <div class="layui-form-item server-ssh-group">
                 <label class="layui-form-label">服务器密码</label>
                 <div class="layui-input-block">
-                    <input type="text" name="serverSshPassword" lay-verify="required" placeholder="请输入"
+                    <input type="text" name="serverSshPassword" placeholder="请输入"
                            autocomplete="off"
                            class="layui-input">
-                    <div class="layui-form-mid layui-text-em">登陆服务器的密码</div>
+                    <div class="layui-form-mid layui-text-em">登陆服务器的密码，留空则不修改</div>
                 </div>
             </div>
             <!--飞书机器人相关参数-->
@@ -361,6 +361,13 @@
         } else if (value === "FEISHU_BOT_HOOK") {
             feishuBotHookGroup.show();
             feishuBotHookGroup.find("input,textarea").attr("lay-verify", "required");
+        }
+
+        //如果是修改，则去掉加密数据的验证
+        if ($("input[name='id']").val()) {
+            $("input[name='accessKey']").removeAttr("lay-verify");
+            $("input[name='secretKey']").removeAttr("lay-verify");
+            $("input[name='serverSshPassword']").removeAttr("lay-verify");
         }
     }
 </script>

@@ -17,6 +17,7 @@ import com.hyx.ssl.tool.api.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ public class AuthConfigController {
         if (entity == null) {
             return R.fail("数据不存在");
         }
+        //数据脱敏
+        this.desensitize(Collections.singletonList(entity));
         return R.data(entity);
     }
 
@@ -49,6 +52,8 @@ public class AuthConfigController {
         Page<AuthConfigEntity> page = authConfigService.page(pageParam, Wrappers.lambdaQuery(AuthConfigEntity.class)
             .eq(StrUtil.isNotBlank(type), AuthConfigEntity::getType, type)
             .orderByDesc(AuthConfigEntity::getId));
+        //数据脱敏
+        this.desensitize(page.getRecords());
         return R.data(page);
     }
 
@@ -56,9 +61,8 @@ public class AuthConfigController {
      * 新增或修改
      */
     @PostMapping
-    public R<Page<AuthConfigEntity>> submit(@RequestBody AuthConfigEntity entity) {
-        authConfigService.saveOrUpdate(entity);
-        return R.status(true);
+    public R submit(@RequestBody AuthConfigEntity entity) {
+        return authConfigService.submit(entity);
     }
 
     /**
@@ -86,5 +90,20 @@ public class AuthConfigController {
 
         authConfigService.removeByIds(ids);
         return R.status(true);
+    }
+
+    /**
+     * 数据脱敏
+     */
+    public void desensitize(List<AuthConfigEntity> list) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+
+        list.forEach(entity -> {
+            entity.setAccessKey(null);
+            entity.setSecretKey(null);
+            entity.setServerSshPassword(null);
+        });
     }
 }

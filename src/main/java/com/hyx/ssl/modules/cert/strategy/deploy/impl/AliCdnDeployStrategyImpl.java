@@ -8,6 +8,7 @@ import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.service.ICertInfoService;
 import com.hyx.ssl.modules.cert.strategy.deploy.DeployStrategy;
 import com.hyx.ssl.tool.api.R;
+import com.hyx.ssl.util.DbSecureUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,10 @@ public class AliCdnDeployStrategyImpl implements DeployStrategy {
             return R.fail("authConfig服务配置获取失败");
         }
 
+        String accessKey = DbSecureUtil.decryptFromDb(authConfig.getAccessKey());
+        String secretKey = DbSecureUtil.decryptFromDb(authConfig.getSecretKey());
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
-        aliCdnService.deploySSL(authConfig.getAccessKey(), authConfig.getSecretKey(), entity.getAliCdnEndpoint(),
+        aliCdnService.deploySSL(accessKey, secretKey, entity.getAliCdnEndpoint(),
             entity.getDomain(), certInfo.getPublicKey(), certInfo.getPrivateKey());
         return R.status(true);
     }

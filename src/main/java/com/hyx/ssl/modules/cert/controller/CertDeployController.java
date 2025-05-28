@@ -39,7 +39,7 @@ public class CertDeployController {
     @GetMapping
     public R<Page<CertDeployEntity>> list(Page<CertDeployEntity> pageParam) {
         Page<CertDeployEntity> page = certDeployService.page(pageParam, Wrappers.lambdaQuery(CertDeployEntity.class)
-            .orderByDesc(CertDeployEntity::getId));
+            .orderByAsc(CertDeployEntity::getCertValidityDateEnd, CertDeployEntity::getId));
         //添加是否自动执行
         page.getRecords().forEach(item -> {
             R<Date> r = certDeployService.getNextExecuteTime(item);

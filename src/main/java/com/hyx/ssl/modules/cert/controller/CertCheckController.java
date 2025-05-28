@@ -85,7 +85,6 @@ public class CertCheckController {
             return R.fail("数据不存在");
         }
 
-        //部署证书
         certCheckService.updateAndSendMsg(certCheck);
         return R.success("执行完毕，请查看日志");
     }

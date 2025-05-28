@@ -85,7 +85,9 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
                                 StrUtil.trim(entity.getDomain()),
                                 DateUtil.formatDateTime(entity.getCertValidityDateEnd())));
                         log.append(StrUtil.format("\n发送消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
-                        entity.setLastMsgTime(new Date());
+                        if (sendMsgR.isSuccess()) {
+                            entity.setLastMsgTime(new Date());
+                        }
                     }
                 }
             }
@@ -96,6 +98,18 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
                  PrintWriter printWriter = new PrintWriter(stringWriter)) {
                 e.printStackTrace(printWriter);
                 log.append(StrUtil.format("\n执行失败：{}", stringWriter.toString()));
+
+                //判断今天是否提醒过
+                if (entity.getLastMsgTime() == null || !DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
+                    R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity,
+                        StrUtil.format("{} 证书监控失败 {}",
+                            StrUtil.trim(entity.getDomain()),
+                            e.getMessage()));
+                    log.append(StrUtil.format("\n发送错误消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
+                    if (sendMsgR.isSuccess()) {
+                        entity.setLastMsgTime(new Date());
+                    }
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

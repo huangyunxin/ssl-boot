@@ -105,8 +105,8 @@ public class CertDeployServiceImpl extends ServiceImpl<CertDeployMapper, CertDep
 
         //有效期大于7天
         if (entity.getCertValidityDateEnd() != null &&
-            entity.getCertValidityDateEnd().after(DateUtil.endOfDay(DateUtil.offsetDay(new Date(), 7)))) {
-            return R.fail("证书有效期大于7天");
+            entity.getCertValidityDateEnd().after(DateUtil.endOfDay(DateUtil.offsetDay(new Date(), 10)))) {
+            return R.fail("证书有效期大于10天");
         }
 
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());

@@ -10,6 +10,7 @@ import com.hyx.ssl.modules.cert.entity.CertInfoEntity;
 import com.hyx.ssl.modules.cert.service.ICertInfoService;
 import com.hyx.ssl.modules.cert.strategy.deploy.DeployStrategy;
 import com.hyx.ssl.tool.api.R;
+import com.hyx.ssl.util.DbSecureUtil;
 import com.jcraft.jsch.Session;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,8 +45,9 @@ public class ServerSshDeployStrategyImpl implements DeployStrategy {
 
         CertInfoEntity certInfo = certInfoService.getById(entity.getCertId());
 
+        String serverSshPassword = DbSecureUtil.decryptFromDb(authConfig.getServerSshPassword());
         Session session = JschUtil.getSession(authConfig.getServerSshHost(), authConfig.getServerSshPort(),
-            authConfig.getServerSshUser(), authConfig.getServerSshPassword());
+            authConfig.getServerSshUser(), serverSshPassword);
 
         String sshExec = entity.getServerSshExec();
 

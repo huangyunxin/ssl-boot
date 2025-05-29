@@ -73,23 +73,12 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
                 throw new Exception("\n证书有效期获取失败");
             }
 
-            //判断8-17点，则发送提醒
-            int hour = DateUtil.hour(new Date(), true);
-            if (8 <= hour && hour <= 17) {
-                //判断证书有效期是否小于等于7天
-                if (DateUtil.betweenDay(new Date(), entity.getCertValidityDateEnd(), true) <= 7) {
-                    //判断今天是否提醒过
-                    if (entity.getLastMsgTime() == null || !DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
-                        R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity,
-                            StrUtil.format("{} 证书即将过期，到期时间 {}",
-                                StrUtil.trim(entity.getDomain()),
-                                DateUtil.formatDateTime(entity.getCertValidityDateEnd())));
-                        log.append(StrUtil.format("\n发送消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
-                        if (sendMsgR.isSuccess()) {
-                            entity.setLastMsgTime(new Date());
-                        }
-                    }
-                }
+            //判断证书有效期是否小于等于7天
+            if (DateUtil.betweenDay(new Date(), entity.getCertValidityDateEnd(), true) <= 7) {
+                //发送消息
+                this.workTimeSendMsg(entity, log, StrUtil.format("{} 证书即将过期，到期时间 {}",
+                    StrUtil.trim(entity.getDomain()),
+                    DateUtil.formatDateTime(entity.getCertValidityDateEnd())));
             }
 
             log.append(StrUtil.format("\n==========完成 {}==========", DateUtil.formatDateTime(new Date())));
@@ -99,17 +88,10 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
                 e.printStackTrace(printWriter);
                 log.append(StrUtil.format("\n执行失败：{}", stringWriter.toString()));
 
-                //判断今天是否提醒过
-                if (entity.getLastMsgTime() == null || !DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
-                    R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity,
-                        StrUtil.format("{} 证书监控失败 {}",
-                            StrUtil.trim(entity.getDomain()),
-                            e.getMessage()));
-                    log.append(StrUtil.format("\n发送错误消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
-                    if (sendMsgR.isSuccess()) {
-                        entity.setLastMsgTime(new Date());
-                    }
-                }
+                //发送消息
+                this.workTimeSendMsg(entity, log, StrUtil.format("{} 证书监控失败 {}",
+                    StrUtil.trim(entity.getDomain()),
+                    e.getMessage()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -117,6 +99,30 @@ public class CertCheckServiceImpl extends ServiceImpl<CertCheckMapper, CertCheck
             entity.setLastExecuteTime(new Date());
             entity.setLog(log.toString());
             this.updateById(entity);
+        }
+    }
+
+    /**
+     * 工作时间8-17点发送消息
+     */
+    public void workTimeSendMsg(CertCheckEntity entity, StringBuffer log, String msg) {
+        int hour = DateUtil.hour(new Date(), true);
+
+        //不在工作时间，则不发送
+        if (hour < 8 || hour > 17) {
+            return;
+        }
+
+
+        //今天发送过，则不发送
+        if (entity.getLastMsgTime() != null && DateUtil.isSameDay(entity.getLastMsgTime(), new Date())) {
+            return;
+        }
+
+        R<Object> sendMsgR = msgStrategyFactory.getCardStrategy(entity.getMsgType()).sendMsg(entity, msg);
+        log.append(StrUtil.format("\n发送消息{}：{}", sendMsgR.isSuccess() ? "成功" : "失败", sendMsgR.getMsg()));
+        if (sendMsgR.isSuccess()) {
+            entity.setLastMsgTime(new Date());
         }
     }
 }

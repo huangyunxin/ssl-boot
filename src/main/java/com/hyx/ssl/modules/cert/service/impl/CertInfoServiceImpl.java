@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.shredzone.acme4j.*;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
+import org.shredzone.acme4j.connector.NetworkSettings;
 import org.shredzone.acme4j.util.KeyPairUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,6 +69,7 @@ public class CertInfoServiceImpl extends ServiceImpl<CertInfoMapper, CertInfoEnt
                 log.append("\n创建正式环境session");
                 session = new Session("acme://letsencrypt.org");
             }
+            session.networkSettings().setTimeout(Duration.ofSeconds(60));
             log.append("\n==========创建ACME服务器session结束==========");
 
             //读取密钥

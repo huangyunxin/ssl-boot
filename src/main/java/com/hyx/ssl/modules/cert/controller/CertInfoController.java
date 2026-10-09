@@ -38,6 +38,7 @@ public class CertInfoController {
     @GetMapping
     public R<Page<CertInfoEntity>> list(Page<CertInfoEntity> page) {
         return R.data(certInfoService.page(page, Wrappers.lambdaQuery(CertInfoEntity.class)
+            .orderByDesc(CertInfoEntity::getIsAuto)
             .orderByAsc(CertInfoEntity::getValidityDateEnd, CertInfoEntity::getId)));
     }
 
